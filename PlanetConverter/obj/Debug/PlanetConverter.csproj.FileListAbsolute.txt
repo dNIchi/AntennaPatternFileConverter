@@ -16,3 +16,4 @@ C:\Code\PRJ-2_PlanetConvert\PlanetConverter_WPF\PlanetConverter\PlanetConverter\
 C:\Code\PRJ-2_PlanetConvert\PlanetConverter_WPF\PlanetConverter\PlanetConverter\obj\Debug\PlanetConverter.csproj.GenerateResource.Cache
 C:\Code\PRJ-2_PlanetConvert\PlanetConverter_WPF\PlanetConverter\PlanetConverter\obj\Debug\PlanetConverter.exe
 C:\Code\PRJ-2_PlanetConvert\PlanetConverter_WPF\PlanetConverter\PlanetConverter\obj\Debug\PlanetConverter.pdb
+C:\Code\PRJ-2_PlanetConvert\PlanetConverter_WPF\PlanetConverter\PlanetConverter\obj\Debug\PlanetConverter.csprojResolveAssemblyReference.cache

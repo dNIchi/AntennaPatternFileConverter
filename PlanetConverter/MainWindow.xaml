@@ -65,6 +65,9 @@
                     Grid.Row="2" 
                     VerticalAlignment="Top" 
                     Width="100" Grid.ColumnSpan="2">
+            <CheckBox IsThreeState="False" x:Name="SelectAllFormatsCheckBox" Content="Select All" Foreground="Black" IsChecked="False" Checked="SelectAllFormatsCheckBox_OnChecked" Unchecked="SelectAllFormatsCheckBox_OnUnchecked"/>
+
+            <Separator Height="05"></Separator>
             <CheckBox x:Name="AircomCheckBox" Content="AIRCOM" Foreground="Black" IsChecked="False" />
             <Separator Height="05"></Separator>
             <CheckBox x:Name="AtollCheckBox" Content="ATOLL" Foreground="Black" IsChecked="False" />
@@ -364,7 +367,7 @@
                   Height="25"
                   Width="65"
                   Background="LightGreen" 
-                  Click="Convert_Files_Button_Click"/>
+                  Click="Target_Dir_Button_Click"/>
             <Button x:Name="DownloadFileButton"  
                   Content="Download" 
                   Margin="5"
@@ -390,49 +393,50 @@
         <!--#endregion-->
 
         <!--#region Format Radio Buttons-->
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,75,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
-            <StackPanel Orientation="Horizontal">
+        
+        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,100,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+            <StackPanel Orientation="Horizontal" RenderTransformOrigin="0.5,1.842">
                 <RadioButton x:Name="Ce4VwaRadioButton" Content=".vwa" Margin="2,0,2,0" VerticalContentAlignment="Center" GroupName="Ce4RadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <RadioButton x:Name="Ce4TxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="Ce4RadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,160,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,185,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
             <StackPanel Orientation="Horizontal">
                 <RadioButton x:Name="GeoPlanVwaRadioButton" Content=".vwa" Margin="2,0,2,0" VerticalContentAlignment="Center" GroupName="GeoPlanRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
                 <RadioButton x:Name="GeoPlanTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="GeoPlanRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,188.7,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,213.7,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
             <StackPanel Orientation="Horizontal">
                 <RadioButton x:Name="GranetPatRadioButton" Content=".pat" Margin="2,0,1,0" VerticalContentAlignment="Center" GroupName="GranetRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
                 <RadioButton x:Name="GranetTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="GranetRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,217,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,242,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
             <StackPanel Orientation="Horizontal">
                 <RadioButton x:Name="HodiaxHodRadioButton" Content=".hod" Margin="2" VerticalContentAlignment="Center" GroupName="HodiaxRadioButtons" IsChecked="True" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
                 <RadioButton x:Name="HodiaxTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="HodiaxRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,246,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,271,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
             <StackPanel Orientation="Horizontal">
                 <RadioButton x:Name="HydraAdfRadioButton" Content=".adf" Margin="2,0,4,0" VerticalContentAlignment="Center" GroupName="HydraRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
                 <RadioButton x:Name="HydraTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="HydraRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,275,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,300,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
             <StackPanel Orientation="Horizontal">
                 <RadioButton x:Name="LccAntRadioButton" Content=".ant" Margin="2,0,4,0" VerticalContentAlignment="Center" GroupName="LccRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
                 <RadioButton x:Name="LccTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="LccRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,365.3,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,390.3,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
             <StackPanel Orientation="Horizontal">
                 <RadioButton x:Name="PathLossAdfRadioButton" Content=".adf" Margin="2,0,4,0" VerticalContentAlignment="Center" GroupName="PathLossRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
                 <RadioButton x:Name="PathLossTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="PathLossRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,393.9,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,418.9,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
             <StackPanel Orientation="Horizontal">
                 <RadioButton x:Name="WizardApfRadioButton" Content=".apf" Margin="2,0,4,0" VerticalContentAlignment="Center" GroupName="WizardRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
                 <RadioButton x:Name="WizardTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="WizardRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>

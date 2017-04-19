@@ -27,17 +27,17 @@ namespace PlanetConverter
 
 
 
-        private string _srcPlnDir; /*$"C:\\Code\\PRJ-2_PlanetConvert\\PlanetFilesSource\\"*/
+        private string _appSrcPlnDir;
         private string _ingestDir = $"C:\\Code\\PRJ-2_PlanetConvert\\PlanetFilesIngestDir\\";
-        private string _targetDir = $"C:\\Code\\PRJ-2_PlanetConvert\\PlanetFilesConvertedDownloads\\";
+        private string _appTargetDir;
         private readonly string _manufacturer = $"Amphenol";
         private string[] _fileEntries;
 
-        private string[] _celCadConvertedFileEntriesV;
-        private string[] _celCadConvertedFileEntriesH;
+        //private string[] _celCadConvertedFileEntriesV;
+        //private string[] _celCadConvertedFileEntriesH;
 
-        private static readonly ILog Log =
-                LogManager.GetLogger( System.Reflection.MethodBase.GetCurrentMethod( ).DeclaringType );
+        //private static readonly ILog Log =
+        //        LogManager.GetLogger( System.Reflection.MethodBase.GetCurrentMethod( ).DeclaringType );
 
 
         #region T/F
@@ -122,8 +122,8 @@ namespace PlanetConverter
         private string _mfrId;
         private string _minGain;
         private string _minFrequency;
-        private string _patternElectricalTilt;
-        private string _patternPostingDate;
+       // private string _patternElectricalTilt;
+       // private string _patternPostingDate;
         private string _polarization;
         private string _size;
         private string _time;
@@ -490,7 +490,7 @@ namespace PlanetConverter
                         }
                     catch (Exception db)
                         {
-                        SaveResults.Text = db.Message;
+                            SaveResults.Text = db.Message;
                         }
                     }
                 }
@@ -509,7 +509,7 @@ namespace PlanetConverter
                     string value = _ce4ConversionResults;
                     string commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                    var Ce4Dir = _targetDir + $"Ce4";
+                    var Ce4Dir = _appTargetDir + $"Ce4";
 
                     //.VWA
                     if (_ce4VwaChecked)
@@ -555,7 +555,7 @@ namespace PlanetConverter
 
             catch (Exception db)
                 {
-                //todo logging
+                    SaveResults.Text = db.Message;
                 }
             }
 
@@ -571,7 +571,7 @@ namespace PlanetConverter
                 var horzFileName =
                     _currentIngestedPlanetFileName;
 
-                var celCadHorizontalDir = _targetDir + "CelCad_Horizontal";
+                var celCadHorizontalDir = _appTargetDir + "CelCad_Horizontal";
                 if (!Directory.Exists( celCadHorizontalDir ))
 
                     Directory.CreateDirectory( celCadHorizontalDir );
@@ -591,7 +591,7 @@ namespace PlanetConverter
                 string vertCommavalue = vertValue.Replace( "\t", "\r\n" );
                 string[] vertWords = vertCommavalue.Split( vertSeparators, StringSplitOptions.RemoveEmptyEntries );
 
-                var celCadVerticalDir = _targetDir + "CelCad_Vertical";
+                var celCadVerticalDir = _appTargetDir + "CelCad_Vertical";
                 if (!Directory.Exists( celCadVerticalDir ))
 
                     Directory.CreateDirectory( celCadVerticalDir );
@@ -766,7 +766,7 @@ namespace PlanetConverter
 
                 #region File Name Disection
                 //method #1
-                 _polRes = fileName.Split( '(', ')' )[1];
+                _polRes = fileName.Split( '(', ')' )[1];
 
                 //substring
                 var trimmedFileName = fileName.Split( '(' )[0];
@@ -829,81 +829,91 @@ namespace PlanetConverter
             {
             using (var fbd = new FolderBrowserDialog( ))
                 {
-                var result = fbd.ShowDialog( );
-                if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace( fbd.SelectedPath ))
+                MinimizeGuiCalls( );
+                var dirIsValid = fbd.ShowDialog( );
+                if (dirIsValid == System.Windows.Forms.DialogResult.OK &&
+                    !string.IsNullOrWhiteSpace( fbd.SelectedPath ))
                     {
-                    _srcPlnDir = fbd.SelectedPath;
-                    MinimizeGuiCalls( );
-                    GetAllFilesInDirectory( fbd.SelectedPath );
+                    _appSrcPlnDir = fbd.SelectedPath;
                     }
                 }
-
             }
-        private void Convert_Files_Button_Click( object sender, RoutedEventArgs e )
+        private void Target_Dir_Button_Click( object sender, RoutedEventArgs e )
             {
+            using (var fbd = new FolderBrowserDialog( ))
+                {
+                MinimizeGuiCalls( );
+                var targetIsValid = fbd.ShowDialog( );
+                if (targetIsValid == System.Windows.Forms.DialogResult.OK &&
+                    !string.IsNullOrWhiteSpace( fbd.SelectedPath ))
+                    {
+                    _appTargetDir = fbd.SelectedPath + $"\\";
 
-            GetAllFilesInDirectory( _srcPlnDir );
-
+                    GetAllFilesInDirectory( _appSrcPlnDir );
+                    }
+                }
             }
+
         private void Download_Converted_Files( object sender, RoutedEventArgs e )
             {
             if (_aircomChecked)
                 {
                 DownloadAircom( );
                 }
-                if (_ce4Checked)
+            if (_ce4Checked)
                 {
                 DownloadCe4Batch( );
                 }
-                if (_celCadChecked)
+            if (_celCadChecked)
                 {
-                 ConvertToCelCadBatchDownload( _model, _trimmedTiltVal, _frequency, _polarization );
+                ConvertToCelCadBatchDownload( _model, _trimmedTiltVal, _frequency, _polarization );
                 }
 
-                if (_geoPlanChecked)
+            if (_geoPlanChecked)
                 {
-                 DownloadGeoPlanBatch( );
+                DownloadGeoPlanBatch( );
                 }
-                if (_granetChecked)
+            if (_granetChecked)
                 {
                 DownloadGranetBatch( );
                 }
-                if (_hodiaxChecked)
+            if (_hodiaxChecked)
                 {
-                 DownloadHodiaxHorizontalBatch( );
-                 DownloadHodiaxVerticalBatch( );
+                DownloadHodiaxHorizontalBatch( );
+                DownloadHodiaxVerticalBatch( );
                 }
-                if (_hydraChecked)
+            if (_hydraChecked)
                 {
                 DownloadHydra( );
                 }
-                if (_lccNetChecked)
+            if (_lccNetChecked)
                 {
                 DownloadLccBatchTest( );
                 }
-                if (_netPlanChecked)
+            if (_netPlanChecked)
                 {
-                 DownloadNetPlanBatch( );
+                DownloadNetPlanBatch( );
                 }
-                if (_odysseyChecked)
+            if (_odysseyChecked)
                 {
-                 DownloadOdysseyBatch( );
+                DownloadOdysseyBatch( );
                 }
-                if (_pathLossChecked)
+            if (_pathLossChecked)
                 {
-                 DownloadPathLossBatchTest( );
+                DownloadPathLossBatch( );
                 }
-                if (_wizardChecked)
+            if (_wizardChecked)
                 {
-                 DownLoadWizardBatchTest( );
+                DownLoadWizardBatch( );
                 }
             }
 
-        
-        private void GetAllFilesInDirectory( string selectedDir )
+
+        private void GetAllFilesInDirectory( string filePath )
             {
-            _srcPlnDir = selectedDir;
-            _fileEntries = Directory.GetFiles( _srcPlnDir );
+            _fileEntries = Directory.GetFiles( filePath );
+            MinimizeGuiCalls( );
+
             foreach (var fileLocation in _fileEntries)
                 {
                 _currentIngestedPlanetFileName = string.Empty;
@@ -925,9 +935,7 @@ namespace PlanetConverter
                         _trimmedTiltVal = _tiltValue.Split( 'T', '-' )[1];
                         _frequency = _name[2];
                         }
-
-                    MinimizeGuiCalls( );
-
+                    
                     //fileName
                     var pathToCheck = $"{_ingestDir}{fileName}";
 
@@ -967,7 +975,7 @@ namespace PlanetConverter
                     }
                 if (_atollChecked)
                     {
-                    ConvertToAtollBatchTest( );
+                    ConvertToAtollBatch( );
                     }
                 if (_ce4Checked)
                     {
@@ -1019,13 +1027,13 @@ namespace PlanetConverter
                     }
                 if (_pathLossChecked)
                     {
-                    ConvertToPathLossBatchTest( );
-                    DownloadPathLossBatchTest( );
+                    ConvertToPathLossBatch( );
+                    DownloadPathLossBatch( );
                     }
                 if (_wizardChecked)
                     {
-                    ConvertToWizardBatchTest( );
-                    DownLoadWizardBatchTest( );
+                    ConvertToWizardBatch( );
+                    DownLoadWizardBatch( );
                     }
                 }
             }
@@ -1108,7 +1116,7 @@ namespace PlanetConverter
                         fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
                         + ".txt";
 
-                    var aircomDir = _targetDir + "Aircom";
+                    var aircomDir = _appTargetDir + "Aircom";
                     if (!Directory.Exists( aircomDir ))
 
                         Directory.CreateDirectory( aircomDir );
@@ -1256,7 +1264,7 @@ namespace PlanetConverter
                     string value = _ce4ConversionResults;
                     string commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                    var Ce4Dir = _targetDir + $"Ce4";
+                    var Ce4Dir = _appTargetDir + $"Ce4";
 
                     //.VWA
                     if (_ce4VwaChecked)
@@ -1344,7 +1352,7 @@ namespace PlanetConverter
                     var celCadVertFileName = "";
                     var celCadHorzFileName = celCadVertFileName = words[1];
 
-                    var celCadHorizontalDir = _targetDir + "CelCad_Horizontal";
+                    var celCadHorizontalDir = _appTargetDir + "CelCad_Horizontal";
 
                     if (!Directory.Exists( celCadHorizontalDir ))
                         Directory.CreateDirectory( celCadHorizontalDir );
@@ -1365,7 +1373,7 @@ namespace PlanetConverter
                     _celCadVerticalConversionResults = start + words[9] + "\r\n" + "V\r\n0.00\r\n" + saveState3 +
                                                        saveState2 + "*";
 
-                    var celCadVerticalDir = _targetDir + "CelCad_Vertical";
+                    var celCadVerticalDir = _appTargetDir + "CelCad_Vertical";
 
                     if (!Directory.Exists( celCadVerticalDir ))
                         Directory.CreateDirectory( celCadVerticalDir );
@@ -1482,7 +1490,7 @@ namespace PlanetConverter
                         fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
                         + ".txt";
 
-                    var celPlanDir = _targetDir + "CelPlan";
+                    var celPlanDir = _appTargetDir + "CelPlan";
                     if (!Directory.Exists( celPlanDir ))
 
                         Directory.CreateDirectory( celPlanDir );
@@ -1602,7 +1610,7 @@ namespace PlanetConverter
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
 
-                    var geoPlanDir = _targetDir + $"GeoPlan";
+                    var geoPlanDir = _appTargetDir + $"GeoPlan";
 
                     //.VWA
                     if (_geoPlanVwaChecked)
@@ -1745,7 +1753,7 @@ namespace PlanetConverter
                     var commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-                    var granetDir = _targetDir + $"Granet";
+                    var granetDir = _appTargetDir + $"Granet";
 
                     //.VWA
                     if (_granetPatChecked)
@@ -1888,7 +1896,7 @@ namespace PlanetConverter
                     var commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-                    var hodiaxHorizDir = _targetDir + $"Hodiax_Horizontal";
+                    var hodiaxHorizDir = _appTargetDir + $"Hodiax_Horizontal";
 
 
                     if (!Directory.Exists( hodiaxHorizDir )) Directory.CreateDirectory( hodiaxHorizDir );
@@ -1943,7 +1951,7 @@ namespace PlanetConverter
                     var commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-                    var hodiaxVertDir = _targetDir + $"Hodiax_Vertical";
+                    var hodiaxVertDir = _appTargetDir + $"Hodiax_Vertical";
                     if (!Directory.Exists( hodiaxVertDir )) Directory.CreateDirectory( hodiaxVertDir );
 
                     if (_hodiaxTxtChecked)
@@ -2097,7 +2105,7 @@ namespace PlanetConverter
                     var commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-                    var hydraDir = _targetDir + $"Hydra";
+                    var hydraDir = _appTargetDir + $"Hydra";
 
                     if (!Directory.Exists( hydraDir )) Directory.CreateDirectory( hydraDir );
 
@@ -2221,7 +2229,7 @@ namespace PlanetConverter
                     var commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-                    var lccNetDir = _targetDir + $"Lcc_Net";
+                    var lccNetDir = _appTargetDir + $"Lcc_Net";
                     if (!Directory.Exists( lccNetDir )) Directory.CreateDirectory( lccNetDir );
 
                     //.ant
@@ -2419,8 +2427,8 @@ namespace PlanetConverter
                 string[] vWords = vCommavalue.Split( vSeparators, StringSplitOptions.RemoveEmptyEntries );
                 string[] hWords = hCommavalue.Split( hSeparators, StringSplitOptions.RemoveEmptyEntries );
 
-                var netPlanHdir = _targetDir + $"NetPlan_Horizontal";
-                var netPlanVdir = _targetDir + $"NetPlan_Vertical";
+                var netPlanHdir = _appTargetDir + $"NetPlan_Horizontal";
+                var netPlanVdir = _appTargetDir + $"NetPlan_Vertical";
 
                 if (!Directory.Exists( netPlanHdir )) Directory.CreateDirectory( netPlanHdir );
                 if (!Directory.Exists( netPlanVdir )) Directory.CreateDirectory( netPlanVdir );
@@ -2509,7 +2517,7 @@ namespace PlanetConverter
             var commaValue = value.Replace( "\t", "\r\n" );
             string[] words = commaValue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-            var odysseyDir = _targetDir + $"Odyssey";
+            var odysseyDir = _appTargetDir + $"Odyssey";
 
             if (!Directory.Exists( odysseyDir )) Directory.CreateDirectory( odysseyDir );
             fileName =
@@ -2540,7 +2548,7 @@ namespace PlanetConverter
                 }
             return saveState;
             }
-        protected void ConvertToPathLossBatchTest( )
+        protected void ConvertToPathLossBatch( )
             {
             if (_pathLossChecked)
                 {
@@ -2620,7 +2628,7 @@ namespace PlanetConverter
                     }
                 }
             }
-        protected void DownloadPathLossBatchTest( )
+        protected void DownloadPathLossBatch( )
             {
 
             var fileName = _currentIngestedPlanetFileName;
@@ -2630,7 +2638,7 @@ namespace PlanetConverter
             var commavalue = value.Replace( "\t", "\r\n" );
             string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-            var pathLossDir = _targetDir + $"PathLoss";
+            var pathLossDir = _appTargetDir + $"PathLoss";
 
             if (!Directory.Exists( pathLossDir )) Directory.CreateDirectory( pathLossDir );
             if (_pathLossTxtChecked)
@@ -2665,7 +2673,7 @@ namespace PlanetConverter
                 }
             }
 
-        private void ConvertToWizardBatchTest( )
+        private void ConvertToWizardBatch( )
             {
             try
                 {
@@ -2765,7 +2773,7 @@ namespace PlanetConverter
                 // TODO STOP THINKING...Enjoy the weekend REPROGRAM YOUR MIND BUILD \N _habbits
                 }
             }
-        private void DownLoadWizardBatchTest( )
+        private void DownLoadWizardBatch( )
             {
             if (_wizardChecked)
                 {
@@ -2777,7 +2785,7 @@ namespace PlanetConverter
                     var commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-                    var wizardDir = _targetDir + $"Wizard";
+                    var wizardDir = _appTargetDir + $"Wizard";
 
                     if (!Directory.Exists( wizardDir )) Directory.CreateDirectory( wizardDir );
 
@@ -2819,7 +2827,7 @@ namespace PlanetConverter
                 }
             }
 
-        private void ConvertToAtollBatchTest( )
+        private void ConvertToAtollBatch( )
             {
             try
                 {
@@ -2828,7 +2836,7 @@ namespace PlanetConverter
                 var commavalue = value.Replace( "\t", "\n" );
                 string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
                 var cont1 = -1;
-                var count = 0;
+                // var count = 0;
                 var count3 = 0.0;
                 var saveState = "";
 
@@ -2842,10 +2850,10 @@ namespace PlanetConverter
                     _atollConversionResults = saveState += cont1.ToString( ) + " " + Math.Round( count3, 2 ) + " ";
                     }
 
-                DateTime dateMeasured = Convert.ToDateTime( _date );
+                var dateMeasured = Convert.ToDateTime( _date );
                 int k;
-                Int32.TryParse( _trimmedTiltVal, out k );
-                AtollPillaLst d = new AtollPillaLst( )
+                int.TryParse( _trimmedTiltVal, out k );
+                var d = new AtollPillaLst( )
                     {
                     Name = _trimmedFileName, //CurrentFileName
                     Name2 = _model,
@@ -2921,6 +2929,7 @@ namespace PlanetConverter
                     }
 
                 #region Insert current datOs to current exRow
+
                 if (_datOsCt <= _fileEntries.Length)
                     {
                     _exSheetPostOpen.Cells[_rowCt, 1] = _datos[_datOsCt].Name;
@@ -2943,16 +2952,20 @@ namespace PlanetConverter
                     _exSheetPostOpen.Cells[_rowCt, 18] = _datos[_datOsCt].Weight;
                     _exSheetPostOpen.Cells[_rowCt, 19] = _datos[_datOsCt].PPD;
                     _rowCt++;
-                    _datOsCt++;
+                    ++_datOsCt;
+                    if (_datOsCt == _fileEntries.Length)
+                        {
+                        var sT = DateTime.Now.ToShortDateString( );
+                        var time = sT.Replace( '/', '_' );
+                        var savePath = $"{_appTargetDir}Atoll_{_model}_{time}.xlsx";
+                        _workBook.SaveAs( savePath );
+                        toExcelApp.Workbooks.Close( );
+                        toExcelApp.Quit( );
+                        }
                     }
 
                 #endregion
-                if (_datOsCt == _fileEntries.Length)
-                    {
-                    _workBook.SaveAs( $"C:\\Code\\PRJ-2_PlanetConvert\\PlanetFilesConvertedDownloads\\AtollConverted{_model}.xlsx" );
-                    toExcelApp.Workbooks.Close( );
-                    toExcelApp.Quit( );
-                    }
+
                 }
             catch (Exception db)
                 {
@@ -2962,5 +2975,62 @@ namespace PlanetConverter
 
         #endregion
 
+
+
+        private void SelectAllFormatsCheckBox_OnChecked( object sender, RoutedEventArgs e )
+            {
+
+            AircomCheckBox.IsChecked = true;
+            AtollCheckBox.IsChecked = true;
+            Ce4CheckBox.IsChecked = true;
+            CelCadCheckBox.IsChecked = true;
+            CelPlanCheckBox.IsChecked = true;
+            GeoplanCheckBox.IsChecked = true;
+            GranetCheckBox.IsChecked = true;
+            HodiaxCheckBox.IsChecked = true;
+            HydraCheckBox.IsChecked = true;
+            LccNetCheckBox.IsChecked = true;
+            NetplanCheckBox.IsChecked = true;
+            OdesseyCheckBox.IsChecked = true;
+            PathLossCheckBox.IsChecked = true;
+            WizardCheckBox.IsChecked = true;
+
+            Ce4VwaRadioButton.IsChecked = true;
+            GeoPlanVwaRadioButton.IsChecked = true;
+            GranetPatRadioButton.IsChecked = true;
+            HydraAdfRadioButton.IsChecked = true;
+            HodiaxHodRadioButton.IsChecked = true;
+            LccAntRadioButton.IsChecked = true;
+            PathLossAdfRadioButton.IsChecked = true;
+            WizardApfRadioButton.IsChecked = true;
+
+            }
+        private void SelectAllFormatsCheckBox_OnUnchecked( object sender, RoutedEventArgs e )
+            {
+            AircomCheckBox.IsChecked = false;
+            AtollCheckBox.IsChecked = false;
+            Ce4CheckBox.IsChecked = false;
+            CelCadCheckBox.IsChecked = false;
+            CelPlanCheckBox.IsChecked = false;
+            GeoplanCheckBox.IsChecked = false;
+            GranetCheckBox.IsChecked = false;
+            HodiaxCheckBox.IsChecked = false;
+            HydraCheckBox.IsChecked = false;
+            LccNetCheckBox.IsChecked = false;
+            NetplanCheckBox.IsChecked = false;
+            OdesseyCheckBox.IsChecked = false;
+            PathLossCheckBox.IsChecked = false;
+            WizardCheckBox.IsChecked = false;
+
+            Ce4TxtRadioButton.IsChecked = true;
+            GeoPlanTxtRadioButton.IsChecked = true;
+            GranetTxtRadioButton.IsChecked = true;
+            HydraTxtRadioButton.IsChecked = true;
+            HodiaxTxtRadioButton.IsChecked = true;
+            LccTxtRadioButton.IsChecked = true;
+            PathLossTxtRadioButton.IsChecked = true;
+            WizardTxtRadioButton.IsChecked = true;
+
+            }
         }
     }
