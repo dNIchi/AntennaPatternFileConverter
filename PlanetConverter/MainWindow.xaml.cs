@@ -1,32 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.ComponentModel;
-using System.Threading;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
 using System.Windows.Forms;
 using NsExcel = Microsoft.Office.Interop.Excel;
 using Path = System.IO.Path;
 using PlanetConverter.Models;
 using log4net;
-using log4net.Core;
 using MessageBox = System.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
 
@@ -41,62 +24,68 @@ namespace PlanetConverter
         private string _currentIngestedPlanetFileName;
         private string _currentIngestedPlanetFile;
 
-        private string _celCadHorzFileName;
-        private string _celCadVertFileName;
 
-        private string _sourcePlnDirectory = $"C:\\Code\\PRJ-2_PlanetConvert\\PlanetFilesSource\\";
-        private string _destinationPlnIngestDir = $"C:\\Code\\PRJ-2_PlanetConvert\\PlanetFilesIngestDir\\";
-        private string _convertedDownloadsDir = $"C:\\Code\\PRJ-2_PlanetConvert\\PlanetFilesConvertedDownloads\\";
-        private string _manufacturer = $"Amphenol";
 
+
+        private string _srcPlnDir; /*$"C:\\Code\\PRJ-2_PlanetConvert\\PlanetFilesSource\\"*/
+        private string _ingestDir = $"C:\\Code\\PRJ-2_PlanetConvert\\PlanetFilesIngestDir\\";
+        private string _targetDir = $"C:\\Code\\PRJ-2_PlanetConvert\\PlanetFilesConvertedDownloads\\";
+        private readonly string _manufacturer = $"Amphenol";
         private string[] _fileEntries;
+
         private string[] _celCadConvertedFileEntriesV;
         private string[] _celCadConvertedFileEntriesH;
-        
+
+        private static readonly ILog Log =
+                LogManager.GetLogger( System.Reflection.MethodBase.GetCurrentMethod( ).DeclaringType );
+
+
+        #region T/F
+        private bool _isAtollExNew = true;
         private bool _aircomChecked,
 
-                     _atollChecked,
+                      _atollChecked,
 
-                     _ce4Checked,
+                        _ce4Checked,
                      _ce4VwaChecked,
                      _ce4TxtChecked,
 
                      _celCadChecked,
 
-                     _celPlanChecked,
+                    _celPlanChecked,
 
-                     _geoPlanChecked,
-                     _geoPlanVwaChecked,
-                     _geoPlanTxtChecked,
+                    _geoPlanChecked,
+                 _geoPlanVwaChecked,
+                 _geoPlanTxtChecked,
 
                      _granetChecked,
-                     _granetPatChecked,
-                     _granetTxtChecked,
+                  _granetPatChecked,
+                  _granetTxtChecked,
 
                      _hodiaxChecked,
-                     _hodiaxHodChecked,
-                     _hodiaxTxtChecked,
+                  _hodiaxHodChecked,
+                  _hodiaxTxtChecked,
 
-                     _hydraChecked,
-                     _hydraAdfChecked,
-                     _hydraTxtChecked,
+                      _hydraChecked,
+                   _hydraAdfChecked,
+                   _hydraTxtChecked,
 
                      _lccNetChecked,
                      _lccAntChecked,
                      _lccTxtChecked,
 
-                     _netPlanChecked,
+                    _netPlanChecked,
 
                     _odysseyChecked,
-                    _pathLossChecked,
-                    _pathLossAdfChecked,
-                    _pathLossTxtChecked,
+                   _pathLossChecked,
+                _pathLossAdfChecked,
+                _pathLossTxtChecked,
 
-                    _wizardChecked,
-                    _wizardApfChecked,
-                    _wizardTxtChecked = false;
+                     _wizardChecked,
+                 _wizardApfChecked,
+                 _wizardTxtChecked = false;
 
-        private bool _isAtollExNew = true;
+        #endregion
 
         #region All Fields
 
@@ -147,18 +136,17 @@ namespace PlanetConverter
         #endregion
 
         #region File Name / Substring 
-
-        private string _model;
-        private string _tiltValue;
+        private string _color;
         private string _frequency;
+        private string _model;
         private string[] _name;
+        private string _polRes;
+        private string _tiltValue;
         private string _trimmedFileName;
         private string _trimmedTiltVal;
-
         #endregion
 
-        #region  File Conversion Results
-
+        #region  Conversion Results
         private string _airComConversionResults;
         private string _atollConversionResults;
         private string _ce4ConversionResults;
@@ -177,23 +165,17 @@ namespace PlanetConverter
         private string _odysseyConversionResults;
         private string _pathLossConversionResults;
         private string _wizardConversionResults;
-
         #endregion
 
 
         #endregion
 
         #region ATOLL Var
-
         private NsExcel.Worksheet _exSheetPostOpen;
         private NsExcel.Workbook _workBook;
-        private List<AtollList> datos = new List<AtollList>( );
+        private List<AtollPillaLst> _datos = new List<AtollPillaLst>( );
         private int _rowCt = 2;
         private int _datOsCt = 0;
-
-            private static readonly ILog Log =
-                LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         #endregion
 
         public MainWindow( )
@@ -202,119 +184,6 @@ namespace PlanetConverter
             }
 
         #region Single Conversion Methods
-
-        private void Browse_File_Button_Click( object sender, RoutedEventArgs e )
-            {
-            #region single file
-
-            //ResultsLabel.Content = string.Empty;
-            //SaveResults.Text = string.Empty;
-
-            //var dlg = new Microsoft.Win32.OpenFileDialog( );
-
-            //// Set filter for file extension and default file extension 
-            //dlg.DefaultExt = ".pln";
-            //dlg.Filter = "";
-
-            //bool? result = dlg.ShowDialog( );
-
-            //// Get the selected file name and display in a TextBox 
-            //if (result == true)
-            //    {
-            //    // Open document 
-            //    var pathToFile = dlg.FileName;
-
-            //    var fileName = string.Empty;
-            //    _currentIngestedPlanetFileName = fileName = Path.GetFileName( pathToFile );
-
-            //    #region File Name Disection
-            //    //method #1
-            //    var _polarizationResult = fileName.Split( '(', ')' )[1];
-
-            //    //substring
-            //    var trimmedFileName = fileName.Split( '(' )[0];
-            //    string[] lines = Regex.Split( trimmedFileName, "-" );
-
-            //    if (lines.Length == 5)
-            //        {
-            //        _model = lines[0];
-            //        _tiltValue = lines[1];
-            //        _frequency = lines[2];
-            //        _color = lines[3];
-            //        }
-
-            //    var regEx = new Regex( $"T" + "[0-9]" + "[0-9]" );
-            //    var tiltResult = regEx.Matches( lines[1] );
-            //    if (tiltResult.Count == 1)
-            //        {
-            //        //todo possibly parse and use tile as counter / validation
-            //        //todo can be done with string Match though...
-            //        }
-            //    #endregion
-
-            //    //fileName
-            //    var pathToCheck = $"{_destinationPlnIngestDir}{fileName}";
-
-
-            //    if (File.Exists( pathToCheck ))
-            //        {
-            //        FileStream fileObj = new FileStream( pathToCheck, FileMode.Open, FileAccess.Read );
-            //        StreamReader readerObj = new StreamReader( fileObj );
-            //        var text = readerObj.ReadToEnd( );
-            //        readerObj.Close( );
-
-            //        _currentIngestedPlanetFile = text;
-            //        }
-
-            //    try
-            //        {
-            //        File.Copy( pathToFile, _destinationPlnIngestDir += fileName );
-            //        FileStream fileObj = new FileStream( _destinationPlnIngestDir, FileMode.Open, FileAccess.Read );
-            //        StreamReader readerObj = new StreamReader( fileObj );
-            //        string text = readerObj.ReadToEnd( );
-            //        readerObj.Close( );
-            //        string readInfo = text;
-
-            //        _currentIngestedPlanetFile = readInfo;
-
-            //        }
-            //    catch (FileNotFoundException db)
-            //        {
-            //        ResultsLabel.Content = $"An error occurred with file {fileName}";
-            //        DebugLabel.Content = db.Message;
-            //        }
-            //    }
-
-            #endregion
-            }
-
-        private void Browse_Dir_Button_Click( object sender, RoutedEventArgs e )
-            {
-                using (var fbd = new FolderBrowserDialog())
-                {
-                    var result = fbd.ShowDialog();
-                if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                {
-                     MinimizeGuiCalls();
-                     GetAllFilesInDirectory( fbd.SelectedPath);
-                }
-                }
-                
-            }
-        private void Convert_File_Button_Click( object sender, RoutedEventArgs e )
-            {
-            ConvertToAircom( );
-            ConvertToCe4( );
-            ConvertToCelCad( );
-            }
-
-        private void Download_Files( object sender, RoutedEventArgs e )
-            {
-            DownloadAircom( );
-            DownloadCe4( );
-            DownloadCelCad( );
-            }
-
         private void ConvertToAircom( )
             {
             ResultsLabel.Content = string.Empty;
@@ -640,7 +509,7 @@ namespace PlanetConverter
                     string value = _ce4ConversionResults;
                     string commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                    var Ce4Dir = _convertedDownloadsDir + $"Ce4";
+                    var Ce4Dir = _targetDir + $"Ce4";
 
                     //.VWA
                     if (_ce4VwaChecked)
@@ -702,7 +571,7 @@ namespace PlanetConverter
                 var horzFileName =
                     _currentIngestedPlanetFileName;
 
-                var celCadHorizontalDir = _convertedDownloadsDir + "CelCad_Horizontal";
+                var celCadHorizontalDir = _targetDir + "CelCad_Horizontal";
                 if (!Directory.Exists( celCadHorizontalDir ))
 
                     Directory.CreateDirectory( celCadHorizontalDir );
@@ -722,7 +591,7 @@ namespace PlanetConverter
                 string vertCommavalue = vertValue.Replace( "\t", "\r\n" );
                 string[] vertWords = vertCommavalue.Split( vertSeparators, StringSplitOptions.RemoveEmptyEntries );
 
-                var celCadVerticalDir = _convertedDownloadsDir + "CelCad_Vertical";
+                var celCadVerticalDir = _targetDir + "CelCad_Vertical";
                 if (!Directory.Exists( celCadVerticalDir ))
 
                     Directory.CreateDirectory( celCadVerticalDir );
@@ -737,36 +606,9 @@ namespace PlanetConverter
                     }
                 }
             }
-
         #endregion
 
         #region Testing Methods
-
-        private void ResetProcessButton_Click( object sender, RoutedEventArgs e )
-            {
-            _currentIngestedPlanetFile =
-                _airComConversionResults =
-                    _ce4ConversionResults =
-                        SaveResults.Text =
-                            ReadResults.Text =
-                                CommentsTextBox.Text =
-                                    DateTextBox.Text =
-                                        DescriptionTextBox.Text =
-                                            FrequencyTextBox.Text =
-                                                FrontToBackTextBox.Text =
-                                                    HorizontalBeamWidthTextBox.Text =
-                                                        MaxFrequencyTextBox.Text =
-                                                            MaxGainTextBox.Text =
-                                                                MinFrequencyTextBox.Text =
-                                                                    PolarizationTextBox.Text =
-                                                                        VerticalBeamWidthTextBox.Text =
-                                                                            TimeTextBox.Text =
-
-                                                                                string.Empty;
-
-            ResultsLabel.Content = $"Please select planet file";
-            }
-
         private void PopulateButton_Click( object sender, RoutedEventArgs e )
             {
             AntennaTypeTextBox.Text = $"RET";
@@ -808,10 +650,6 @@ namespace PlanetConverter
             WeightTextBox.Text = $"305";
             WindAreaTextBox.Text = $".7";
             }
-
-        #endregion
-
-        #region Batch 
         private void MinimizeGuiCalls( )
             {
             _antennaType = AntennaTypeTextBox.Text;
@@ -857,7 +695,7 @@ namespace PlanetConverter
 
             _aircomChecked = AircomCheckBox.IsChecked.GetValueOrDefault( );
 
-            _atollChecked = AtollCheckBox.IsChecked.GetValueOrDefault();
+            _atollChecked = AtollCheckBox.IsChecked.GetValueOrDefault( );
 
             _ce4Checked = Ce4CheckBox.IsChecked.GetValueOrDefault( );
             _ce4VwaChecked = Ce4VwaRadioButton.IsChecked.GetValueOrDefault( );
@@ -898,79 +736,243 @@ namespace PlanetConverter
             _wizardApfChecked = WizardApfRadioButton.IsChecked.GetValueOrDefault( );
             _wizardTxtChecked = WizardTxtRadioButton.IsChecked.GetValueOrDefault( );
             }
-        private void GetAllFilesInDirectory(string srcDir )
-        {
-            _sourcePlnDirectory = srcDir;
-            _fileEntries = Directory.GetFiles( _sourcePlnDirectory );
+        #endregion
+
+        #region Batch Operations 
+
+        private void Single_File_Button_Click( object sender, RoutedEventArgs e )
+            {
+            #region single file
+
+            ResultsLabel.Content = string.Empty;
+            SaveResults.Text = string.Empty;
+
+            var dlg = new Microsoft.Win32.OpenFileDialog( );
+
+            // Set filter for file extension and default file extension 
+            dlg.DefaultExt = ".pln";
+            dlg.Filter = "";
+
+            bool? result = dlg.ShowDialog( );
+
+            // Get the selected file name and display in a TextBox 
+            if (result == true)
+                {
+                // Open document 
+                var pathToFile = dlg.FileName;
+
+                var fileName = string.Empty;
+                _currentIngestedPlanetFileName = fileName = Path.GetFileName( pathToFile );
+
+                #region File Name Disection
+                //method #1
+                 _polRes = fileName.Split( '(', ')' )[1];
+
+                //substring
+                var trimmedFileName = fileName.Split( '(' )[0];
+                string[] lines = Regex.Split( trimmedFileName, "-" );
+
+                if (lines.Length == 5)
+                    {
+                    _model = lines[0];
+                    _tiltValue = lines[1];
+                    _frequency = lines[2];
+                    _color = lines[3];
+                    }
+
+                var regEx = new Regex( $"T" + "[0-9]" + "[0-9]" );
+                var tiltResult = regEx.Matches( lines[1] );
+                if (tiltResult.Count == 1)
+                    {
+                    //todo possibly parse and use tile as counter / validation
+                    //todo can be done with string Match though...
+                    }
+                #endregion
+
+                //fileName
+                var pathToCheck = $"{_ingestDir}{fileName}";
+
+
+                if (File.Exists( pathToCheck ))
+                    {
+                    FileStream fileObj = new FileStream( pathToCheck, FileMode.Open, FileAccess.Read );
+                    StreamReader readerObj = new StreamReader( fileObj );
+                    var text = readerObj.ReadToEnd( );
+                    readerObj.Close( );
+
+                    _currentIngestedPlanetFile = text;
+                    }
+
+                try
+                    {
+                    File.Copy( pathToFile, _ingestDir += fileName );
+                    FileStream fileObj = new FileStream( _ingestDir, FileMode.Open, FileAccess.Read );
+                    StreamReader readerObj = new StreamReader( fileObj );
+                    string text = readerObj.ReadToEnd( );
+                    readerObj.Close( );
+                    string readInfo = text;
+
+                    _currentIngestedPlanetFile = readInfo;
+
+                    }
+                catch (FileNotFoundException db)
+                    {
+                    ResultsLabel.Content = $"An error occurred with file {fileName}";
+                    DebugLabel.Content = db.Message;
+                    }
+                }
+
+            #endregion
+            }
+
+        private void Src_Dir_Button_Click( object sender, RoutedEventArgs e )
+            {
+            using (var fbd = new FolderBrowserDialog( ))
+                {
+                var result = fbd.ShowDialog( );
+                if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace( fbd.SelectedPath ))
+                    {
+                    _srcPlnDir = fbd.SelectedPath;
+                    MinimizeGuiCalls( );
+                    GetAllFilesInDirectory( fbd.SelectedPath );
+                    }
+                }
+
+            }
+        private void Convert_Files_Button_Click( object sender, RoutedEventArgs e )
+            {
+
+            GetAllFilesInDirectory( _srcPlnDir );
+
+            }
+        private void Download_Converted_Files( object sender, RoutedEventArgs e )
+            {
+            if (_aircomChecked)
+                {
+                DownloadAircom( );
+                }
+                if (_ce4Checked)
+                {
+                DownloadCe4Batch( );
+                }
+                if (_celCadChecked)
+                {
+                 ConvertToCelCadBatchDownload( _model, _trimmedTiltVal, _frequency, _polarization );
+                }
+
+                if (_geoPlanChecked)
+                {
+                 DownloadGeoPlanBatch( );
+                }
+                if (_granetChecked)
+                {
+                DownloadGranetBatch( );
+                }
+                if (_hodiaxChecked)
+                {
+                 DownloadHodiaxHorizontalBatch( );
+                 DownloadHodiaxVerticalBatch( );
+                }
+                if (_hydraChecked)
+                {
+                DownloadHydra( );
+                }
+                if (_lccNetChecked)
+                {
+                DownloadLccBatchTest( );
+                }
+                if (_netPlanChecked)
+                {
+                 DownloadNetPlanBatch( );
+                }
+                if (_odysseyChecked)
+                {
+                 DownloadOdysseyBatch( );
+                }
+                if (_pathLossChecked)
+                {
+                 DownloadPathLossBatchTest( );
+                }
+                if (_wizardChecked)
+                {
+                 DownLoadWizardBatchTest( );
+                }
+            }
+
+        
+        private void GetAllFilesInDirectory( string selectedDir )
+            {
+            _srcPlnDir = selectedDir;
+            _fileEntries = Directory.GetFiles( _srcPlnDir );
             foreach (var fileLocation in _fileEntries)
                 {
                 _currentIngestedPlanetFileName = string.Empty;
                 var fileName = _currentIngestedPlanetFileName = Path.GetFileName( fileLocation );
 
                 //substring
-                    if (fileName != null)
+                if (fileName != null)
                     {
-                        _trimmedFileName = fileName.Split( '(' )[0];
-                        _name = Regex.Split( _trimmedFileName, "-" );
+                    _trimmedFileName = fileName.Split( '(' )[0];
+                    _name = Regex.Split( _trimmedFileName, "-" );
 
-                        if (_name.Length == 5)
+                    if (_name.Length == 5)
                         {
-                            //method #1
-                            _polarization = fileName.Split( '(', ')' )[1];
+                        //method #1
+                        _polarization = fileName.Split( '(', ')' )[1];
 
-                            _model = _name[0];
-                            _tiltValue = _name[1];
-                            _trimmedTiltVal = _tiltValue.Split( 'T', '-' )[1];
-                            _frequency = _name[2];
+                        _model = _name[0];
+                        _tiltValue = _name[1];
+                        _trimmedTiltVal = _tiltValue.Split( 'T', '-' )[1];
+                        _frequency = _name[2];
                         }
 
-                        MinimizeGuiCalls( );
+                    MinimizeGuiCalls( );
 
-                        //fileName
-                        var pathToCheck = $"{_destinationPlnIngestDir}{fileName}";
+                    //fileName
+                    var pathToCheck = $"{_ingestDir}{fileName}";
 
-                        if (File.Exists( pathToCheck ))
+                    if (File.Exists( pathToCheck ))
                         {
-                            var fileObj = new FileStream( pathToCheck, FileMode.Open, FileAccess.Read );
+                        var fileObj = new FileStream( pathToCheck, FileMode.Open, FileAccess.Read );
+                        var readerObj = new StreamReader( fileObj );
+                        var text = readerObj.ReadToEnd( );
+                        readerObj.Close( );
+
+                        _currentIngestedPlanetFile = text;
+                        }
+                    try
+                        {
+                        if (!File.Exists( pathToCheck ))
+                            {
+                            File.Copy( fileLocation, _ingestDir + fileName );
+                            var fileObj = new FileStream( _ingestDir + fileName, FileMode.Open,
+                                FileAccess.Read );
                             var readerObj = new StreamReader( fileObj );
                             var text = readerObj.ReadToEnd( );
                             readerObj.Close( );
 
                             _currentIngestedPlanetFile = text;
-                        }
-                        try
-                        {
-                            if (!File.Exists( pathToCheck ))
-                            {
-                                File.Copy( fileLocation, _destinationPlnIngestDir + fileName );
-                                var fileObj = new FileStream( _destinationPlnIngestDir + fileName, FileMode.Open,
-                                    FileAccess.Read );
-                                var readerObj = new StreamReader( fileObj );
-                                var text = readerObj.ReadToEnd( );
-                                readerObj.Close( );
-
-                                _currentIngestedPlanetFile = text;
                             }
                         }
-                        catch (FileNotFoundException db)
+                    catch (FileNotFoundException db)
                         {
-                            Console.WriteLine( db.Message );
+                        Console.WriteLine( db.Message );
                         }
                     }
 
                 if (_aircomChecked)
                     {
                     ConvertToAircomBatch( _model, _tiltValue, _frequency, _polarization );
-                    DownloadAircom( ); 
+                    DownloadAircom( );
                     }
                 if (_atollChecked)
                     {
-                    ConvertToAtollBatchTest( ); 
+                    ConvertToAtollBatchTest( );
                     }
                 if (_ce4Checked)
                     {
                     ConvertToCe4Batch( _model, _polarization );
-                    DownloadCe4Batch( ); 
+                    DownloadCe4Batch( );
                     }
                 if (_celCadChecked)
                     {
@@ -982,51 +984,52 @@ namespace PlanetConverter
                 if (_geoPlanChecked)
                     {
                     ConvertToGeoPlanBatch( );
-                    DownloadGeoPlanBatch( ); 
+                    DownloadGeoPlanBatch( );
                     }
                 if (_granetChecked)
                     {
                     ConvertToGranetBatch( );
-                    DownloadGranetBatch( ); 
+                    DownloadGranetBatch( );
                     }
                 if (_hodiaxChecked)
                     {
                     ConvertToHodiaxBatch( );
                     DownloadHodiaxHorizontalBatch( );
-                    DownloadHodiaxVerticalBatch( ); 
+                    DownloadHodiaxVerticalBatch( );
                     }
                 if (_hydraChecked)
                     {
                     ConvertToHydraBatch( );
-                    DownloadHydra( ); 
+                    DownloadHydra( );
                     }
                 if (_lccNetChecked)
                     {
                     ConvertToLccBatchTest( );
-                    DownloadLccBatchTest( ); 
+                    DownloadLccBatchTest( );
                     }
                 if (_netPlanChecked)
                     {
                     ConvertToNetPlanBatch( );
-                    DownloadNetPlanBatch( ); 
+                    DownloadNetPlanBatch( );
                     }
                 if (_odysseyChecked)
                     {
                     ConvertToOdysseyBatch( );
-                    DownloadOdysseyBatch( ); 
+                    DownloadOdysseyBatch( );
                     }
                 if (_pathLossChecked)
                     {
                     ConvertToPathLossBatchTest( );
-                    DownloadPathLossBatchTest( ); 
+                    DownloadPathLossBatchTest( );
                     }
                 if (_wizardChecked)
                     {
                     ConvertToWizardBatchTest( );
-                    DownLoadWizardBatchTest( ); 
+                    DownLoadWizardBatchTest( );
                     }
                 }
             }
+
 
         private void ConvertToAircomBatch( string model, string tiltValue, string frequency, string polarization )
             {
@@ -1049,6 +1052,7 @@ namespace PlanetConverter
                     if (totalWords <= 0)
                         {
                         //todo logging
+
                         }
                     var start = $"NAME\t" + words[1] + "\r\n" +
                                 "MAKE\t" + model + "\tAmphenol\r\n" +
@@ -1104,7 +1108,7 @@ namespace PlanetConverter
                         fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
                         + ".txt";
 
-                    var aircomDir = _convertedDownloadsDir + "Aircom";
+                    var aircomDir = _targetDir + "Aircom";
                     if (!Directory.Exists( aircomDir ))
 
                         Directory.CreateDirectory( aircomDir );
@@ -1252,7 +1256,7 @@ namespace PlanetConverter
                     string value = _ce4ConversionResults;
                     string commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                    var Ce4Dir = _convertedDownloadsDir + $"Ce4";
+                    var Ce4Dir = _targetDir + $"Ce4";
 
                     //.VWA
                     if (_ce4VwaChecked)
@@ -1337,20 +1341,21 @@ namespace PlanetConverter
                     _celCadHorizontalConversionResults =
                         start + words[7] + "\r\n" + "H\r\n0.00\r\n" + saveState + "*";
 
-                    _celCadHorzFileName = _celCadVertFileName = words[1];
+                    var celCadVertFileName = "";
+                    var celCadHorzFileName = celCadVertFileName = words[1];
 
-                    var celCadHorizontalDir = _convertedDownloadsDir + "CelCad_Horizontal";
+                    var celCadHorizontalDir = _targetDir + "CelCad_Horizontal";
 
                     if (!Directory.Exists( celCadHorizontalDir ))
                         Directory.CreateDirectory( celCadHorizontalDir );
 
                     if (Directory.Exists( celCadHorizontalDir ))
                         {
-                        if (!File.Exists( celCadHorizontalDir + "\\" + _celCadHorzFileName ))
+                        if (!File.Exists( celCadHorizontalDir + "\\" + celCadHorzFileName ))
                             {
-                            using (var tempCreate = File.Create( _celCadHorzFileName, 1024 ))
+                            using (var tempCreate = File.Create( celCadHorzFileName, 1024 ))
                                 {
-                                File.WriteAllText( $"{celCadHorizontalDir}\\{_celCadHorzFileName}",
+                                File.WriteAllText( $"{celCadHorizontalDir}\\{celCadHorzFileName}",
                                     _celCadHorizontalConversionResults );
                                 tempCreate.Close( );
                                 }
@@ -1360,18 +1365,18 @@ namespace PlanetConverter
                     _celCadVerticalConversionResults = start + words[9] + "\r\n" + "V\r\n0.00\r\n" + saveState3 +
                                                        saveState2 + "*";
 
-                    var celCadVerticalDir = _convertedDownloadsDir + "CelCad_Vertical";
+                    var celCadVerticalDir = _targetDir + "CelCad_Vertical";
 
                     if (!Directory.Exists( celCadVerticalDir ))
                         Directory.CreateDirectory( celCadVerticalDir );
 
                     if (Directory.Exists( celCadVerticalDir ))
                         {
-                        if (!File.Exists( celCadVerticalDir + "\\" + _celCadVertFileName ))
+                        if (!File.Exists( celCadVerticalDir + "\\" + celCadVertFileName ))
                             {
-                            using (var tempCreate = File.Create( _celCadVertFileName, 1024 ))
+                            using (var tempCreate = File.Create( celCadVertFileName, 1024 ))
                                 {
-                                File.WriteAllText( $"{celCadVerticalDir}\\{_celCadVertFileName}",
+                                File.WriteAllText( $"{celCadVerticalDir}\\{celCadVertFileName}",
                                     _celCadVerticalConversionResults );
                                 tempCreate.Close( );
                                 }
@@ -1477,7 +1482,7 @@ namespace PlanetConverter
                         fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
                         + ".txt";
 
-                    var celPlanDir = _convertedDownloadsDir + "CelPlan";
+                    var celPlanDir = _targetDir + "CelPlan";
                     if (!Directory.Exists( celPlanDir ))
 
                         Directory.CreateDirectory( celPlanDir );
@@ -1597,7 +1602,7 @@ namespace PlanetConverter
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
 
-                    var geoPlanDir = _convertedDownloadsDir + $"GeoPlan";
+                    var geoPlanDir = _targetDir + $"GeoPlan";
 
                     //.VWA
                     if (_geoPlanVwaChecked)
@@ -1740,7 +1745,7 @@ namespace PlanetConverter
                     var commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-                    var granetDir = _convertedDownloadsDir + $"Granet";
+                    var granetDir = _targetDir + $"Granet";
 
                     //.VWA
                     if (_granetPatChecked)
@@ -1883,7 +1888,7 @@ namespace PlanetConverter
                     var commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-                    var hodiaxHorizDir = _convertedDownloadsDir + $"Hodiax_Horizontal";
+                    var hodiaxHorizDir = _targetDir + $"Hodiax_Horizontal";
 
 
                     if (!Directory.Exists( hodiaxHorizDir )) Directory.CreateDirectory( hodiaxHorizDir );
@@ -1938,7 +1943,7 @@ namespace PlanetConverter
                     var commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-                    var hodiaxVertDir = _convertedDownloadsDir + $"Hodiax_Vertical";
+                    var hodiaxVertDir = _targetDir + $"Hodiax_Vertical";
                     if (!Directory.Exists( hodiaxVertDir )) Directory.CreateDirectory( hodiaxVertDir );
 
                     if (_hodiaxTxtChecked)
@@ -2092,7 +2097,7 @@ namespace PlanetConverter
                     var commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-                    var hydraDir = _convertedDownloadsDir + $"Hydra";
+                    var hydraDir = _targetDir + $"Hydra";
 
                     if (!Directory.Exists( hydraDir )) Directory.CreateDirectory( hydraDir );
 
@@ -2216,7 +2221,7 @@ namespace PlanetConverter
                     var commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-                    var lccNetDir = _convertedDownloadsDir + $"Lcc_Net";
+                    var lccNetDir = _targetDir + $"Lcc_Net";
                     if (!Directory.Exists( lccNetDir )) Directory.CreateDirectory( lccNetDir );
 
                     //.ant
@@ -2414,8 +2419,8 @@ namespace PlanetConverter
                 string[] vWords = vCommavalue.Split( vSeparators, StringSplitOptions.RemoveEmptyEntries );
                 string[] hWords = hCommavalue.Split( hSeparators, StringSplitOptions.RemoveEmptyEntries );
 
-                var netPlanHdir = _convertedDownloadsDir + $"NetPlan_Horizontal";
-                var netPlanVdir = _convertedDownloadsDir + $"NetPlan_Vertical";
+                var netPlanHdir = _targetDir + $"NetPlan_Horizontal";
+                var netPlanVdir = _targetDir + $"NetPlan_Vertical";
 
                 if (!Directory.Exists( netPlanHdir )) Directory.CreateDirectory( netPlanHdir );
                 if (!Directory.Exists( netPlanVdir )) Directory.CreateDirectory( netPlanVdir );
@@ -2504,7 +2509,7 @@ namespace PlanetConverter
             var commaValue = value.Replace( "\t", "\r\n" );
             string[] words = commaValue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-            var odysseyDir = _convertedDownloadsDir + $"Odyssey";
+            var odysseyDir = _targetDir + $"Odyssey";
 
             if (!Directory.Exists( odysseyDir )) Directory.CreateDirectory( odysseyDir );
             fileName =
@@ -2625,7 +2630,7 @@ namespace PlanetConverter
             var commavalue = value.Replace( "\t", "\r\n" );
             string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-            var pathLossDir = _convertedDownloadsDir + $"PathLoss";
+            var pathLossDir = _targetDir + $"PathLoss";
 
             if (!Directory.Exists( pathLossDir )) Directory.CreateDirectory( pathLossDir );
             if (_pathLossTxtChecked)
@@ -2772,7 +2777,7 @@ namespace PlanetConverter
                     var commavalue = value.Replace( "\t", "\r\n" );
                     string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-                    var wizardDir = _convertedDownloadsDir + $"Wizard";
+                    var wizardDir = _targetDir + $"Wizard";
 
                     if (!Directory.Exists( wizardDir )) Directory.CreateDirectory( wizardDir );
 
@@ -2840,7 +2845,7 @@ namespace PlanetConverter
                 DateTime dateMeasured = Convert.ToDateTime( _date );
                 int k;
                 Int32.TryParse( _trimmedTiltVal, out k );
-                AtollList d = new AtollList( )
+                AtollPillaLst d = new AtollPillaLst( )
                     {
                     Name = _trimmedFileName, //CurrentFileName
                     Name2 = _model,
@@ -2865,7 +2870,7 @@ namespace PlanetConverter
                     };
 
 
-                datos.Add( d );
+                _datos.Add( d );
                 // count += 1;
 
                 //var rowCt = 2; // todo var _fileEntries[] 
@@ -2918,25 +2923,25 @@ namespace PlanetConverter
                 #region Insert current datOs to current exRow
                 if (_datOsCt <= _fileEntries.Length)
                     {
-                    _exSheetPostOpen.Cells[_rowCt, 1] = datos[_datOsCt].Name;
-                    _exSheetPostOpen.Cells[_rowCt, 2] = datos[_datOsCt].Name2; //trim file name C0000G
-                    _exSheetPostOpen.Cells[_rowCt, 3] = datos[_datOsCt].Gain;
-                    _exSheetPostOpen.Cells[_rowCt, 4] = datos[_datOsCt].Manuf;
-                    _exSheetPostOpen.Cells[_rowCt, 5] = datos[_datOsCt].Comm;
-                    _exSheetPostOpen.Cells[_rowCt, 6] = datos[_datOsCt].Patt;
-                    _exSheetPostOpen.Cells[_rowCt, 7] = datos[_datOsCt].PET;
-                    _exSheetPostOpen.Cells[_rowCt, 8] = datos[_datOsCt].Beam;
-                    _exSheetPostOpen.Cells[_rowCt, 9] = datos[_datOsCt].Fmin;
-                    _exSheetPostOpen.Cells[_rowCt, 10] = datos[_datOsCt].Fmax;
-                    _exSheetPostOpen.Cells[_rowCt, 11] = datos[_datOsCt].Freq;
-                    _exSheetPostOpen.Cells[_rowCt, 12] = datos[_datOsCt].VWidth;
-                    _exSheetPostOpen.Cells[_rowCt, 13] = datos[_datOsCt].FTB;
-                    _exSheetPostOpen.Cells[_rowCt, 14] = datos[_datOsCt].Tilt;
-                    _exSheetPostOpen.Cells[_rowCt, 15] = datos[_datOsCt].Hwidth;
-                    _exSheetPostOpen.Cells[_rowCt, 16] = datos[_datOsCt].Fam;
-                    _exSheetPostOpen.Cells[_rowCt, 17] = datos[_datOsCt].Dim;
-                    _exSheetPostOpen.Cells[_rowCt, 18] = datos[_datOsCt].Weight;
-                    _exSheetPostOpen.Cells[_rowCt, 19] = datos[_datOsCt].PPD;
+                    _exSheetPostOpen.Cells[_rowCt, 1] = _datos[_datOsCt].Name;
+                    _exSheetPostOpen.Cells[_rowCt, 2] = _datos[_datOsCt].Name2; //trim file name C0000G
+                    _exSheetPostOpen.Cells[_rowCt, 3] = _datos[_datOsCt].Gain;
+                    _exSheetPostOpen.Cells[_rowCt, 4] = _datos[_datOsCt].Manuf;
+                    _exSheetPostOpen.Cells[_rowCt, 5] = _datos[_datOsCt].Comm;
+                    _exSheetPostOpen.Cells[_rowCt, 6] = _datos[_datOsCt].Patt;
+                    _exSheetPostOpen.Cells[_rowCt, 7] = _datos[_datOsCt].PET;
+                    _exSheetPostOpen.Cells[_rowCt, 8] = _datos[_datOsCt].Beam;
+                    _exSheetPostOpen.Cells[_rowCt, 9] = _datos[_datOsCt].Fmin;
+                    _exSheetPostOpen.Cells[_rowCt, 10] = _datos[_datOsCt].Fmax;
+                    _exSheetPostOpen.Cells[_rowCt, 11] = _datos[_datOsCt].Freq;
+                    _exSheetPostOpen.Cells[_rowCt, 12] = _datos[_datOsCt].VWidth;
+                    _exSheetPostOpen.Cells[_rowCt, 13] = _datos[_datOsCt].FTB;
+                    _exSheetPostOpen.Cells[_rowCt, 14] = _datos[_datOsCt].Tilt;
+                    _exSheetPostOpen.Cells[_rowCt, 15] = _datos[_datOsCt].Hwidth;
+                    _exSheetPostOpen.Cells[_rowCt, 16] = _datos[_datOsCt].Fam;
+                    _exSheetPostOpen.Cells[_rowCt, 17] = _datos[_datOsCt].Dim;
+                    _exSheetPostOpen.Cells[_rowCt, 18] = _datos[_datOsCt].Weight;
+                    _exSheetPostOpen.Cells[_rowCt, 19] = _datos[_datOsCt].PPD;
                     _rowCt++;
                     _datOsCt++;
                     }
@@ -2954,111 +2959,8 @@ namespace PlanetConverter
                 SaveResults.Text = db.Message;
                 }
             }
-        
-        #endregion
-
-        
-
-        #region Unused Methods
-
-        private void DownloadCelCadConvertedBatchHorizontals( )
-            {
-            _celCadConvertedFileEntriesH = Directory.GetFiles( _convertedDownloadsDir + "CelCad_Horizontal" );
-            foreach (var fileLocation in _celCadConvertedFileEntriesH)
-                {
-                if (_celCadChecked)
-                    {
-                    string[] separators = { "\r\n" };
-
-                    FileStream fileObj = new FileStream( fileLocation, FileMode.Open, FileAccess.Read );
-                    StreamReader readerObj = new StreamReader( fileObj );
-                    var text = readerObj.ReadToEnd( );
-                    readerObj.Close( );
-
-
-
-                    var value = _currentIngestedPlanetFile = text;
-                    var commavalue = value.Replace( "\t", "\r\n" );
-
-
-                    // string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-
-                    var horzFileName = Path.GetFileName( fileLocation );
-
-                    var celCadHorizontalDir = _convertedDownloadsDir + "CelCad_Horizontal";
-                    if (!Directory.Exists( celCadHorizontalDir ))
-
-                        Directory.CreateDirectory( celCadHorizontalDir );
-
-                    if (!File.Exists( celCadHorizontalDir + "\\" + horzFileName ))
-                        {
-                        using (var tempFile = File.Create( horzFileName, 1024 ))
-                            {
-                            File.WriteAllText( $"{celCadHorizontalDir}\\{horzFileName}", value );
-                            tempFile.Close( );
-                            }
-                        }
-                    }
-                }
-            }
-
-        private void DownloadCelCadBatchConvertedVerticals( )
-            {
-            _celCadConvertedFileEntriesV = Directory.GetFiles( _convertedDownloadsDir + "CelCad_Vertical" );
-            foreach (var fileLocation in _celCadConvertedFileEntriesV)
-                {
-                if (_celCadChecked)
-                    {
-                    string[] vertSeparators = { "\r\n" };
-
-                    var fileObj = new FileStream( fileLocation, FileMode.Open, FileAccess.Read );
-                    var readerObj = new StreamReader( fileObj );
-                    var text = readerObj.ReadToEnd( );
-                    readerObj.Close( );
-
-                    var vertValue = _currentIngestedPlanetFileName = text;
-                    var vertCommavalue = vertValue.Replace( "\t", "\r\n" );
-                    //string[] vertWords = vertCommavalue.Split( vertSeparators, StringSplitOptions.RemoveEmptyEntries );
-
-                    var vertFileName = Path.GetFileName( fileLocation );
-
-                    var celCadVerticalDir = _convertedDownloadsDir + "CelCad_Vertical";
-                    if (!Directory.Exists( celCadVerticalDir ))
-
-                        Directory.CreateDirectory( celCadVerticalDir );
-
-                    if (!File.Exists( celCadVerticalDir + "\\" + vertFileName ))
-                        {
-                        using (var tempFile = File.Create( vertFileName, 1024 ))
-                            {
-                            File.WriteAllText( $"{celCadVerticalDir}\\{vertFileName}", vertValue );
-                            tempFile.Close( );
-                            }
-                        }
-                    }
-                }
-            }
-
-        private void ExtractFileNameValues( string fileName )
-            {
-            //method #1
-            var _polarizationResult = fileName.Split( '(', ')' )[1];
-
-            //substring
-            var trimmedFileName = fileName.Split( '(' )[0];
-            string[] lines = Regex.Split( trimmedFileName, "-" );
-
-            if (lines.Length == 5)
-                {
-                _model = lines[0];
-                _tiltValue = lines[1];
-                _frequency = lines[2];
-                //_color = lines[3];
-                }
-            }
 
         #endregion
-
 
         }
     }

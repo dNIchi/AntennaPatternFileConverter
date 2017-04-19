@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PlanetConverter.Models
+﻿namespace PlanetConverter.Models
     {
-   public class AtollList
+   public class AtollPillaLst
         {
             public string Name { get; set; }
             public string Name2 { get; set; }

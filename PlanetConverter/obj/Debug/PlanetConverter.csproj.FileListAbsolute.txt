@@ -5,7 +5,6 @@ C:\Code\PRJ-2_PlanetConvert\PlanetConverter_WPF\PlanetConverter\PlanetConverter\
 C:\Code\PRJ-2_PlanetConvert\PlanetConverter_WPF\PlanetConverter\PlanetConverter\bin\Debug\log4net.dll
 C:\Code\PRJ-2_PlanetConvert\PlanetConverter_WPF\PlanetConverter\PlanetConverter\bin\Debug\DocumentFormat.OpenXml.xml
 C:\Code\PRJ-2_PlanetConvert\PlanetConverter_WPF\PlanetConverter\PlanetConverter\bin\Debug\log4net.xml
-C:\Code\PRJ-2_PlanetConvert\PlanetConverter_WPF\PlanetConverter\PlanetConverter\obj\Debug\PlanetConverter.csprojResolveAssemblyReference.cache
 C:\Code\PRJ-2_PlanetConvert\PlanetConverter_WPF\PlanetConverter\PlanetConverter\obj\Debug\PlanetConverter.csproj.ResolveComReference.cache
 C:\Code\PRJ-2_PlanetConvert\PlanetConverter_WPF\PlanetConverter\PlanetConverter\obj\Debug\MainWindow.g.cs
 C:\Code\PRJ-2_PlanetConvert\PlanetConverter_WPF\PlanetConverter\PlanetConverter\obj\Debug\App.g.cs

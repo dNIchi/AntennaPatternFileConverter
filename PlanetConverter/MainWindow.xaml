@@ -352,33 +352,33 @@
 
         <!--#region Nav Buttons -->
         <StackPanel Orientation="Horizontal" Grid.ColumnSpan="4" Margin="3.286,105,6.286,55" Grid.RowSpan="2" Grid.Column="1">
-            <Button x:Name="BrowseDirButton"
-                  Content="Browse Dir" 
+            <Button x:Name="BrowseDirSrcButton"
+                  Content="Source Dir" 
                   Margin="5"
                   Height="25"
                   Width="65" 
-                  Click="Browse_Dir_Button_Click"/>
-            <Button x:Name="ConvertFileButton"
-                  Content="Convert" 
+                  Click="Src_Dir_Button_Click"/>
+            <Button x:Name="ConvertedFileDestButton"
+                  Content="Target Dir" 
                   Margin="5"
                   Height="25"
                   Width="65"
                   Background="LightGreen" 
-                  Click="Convert_File_Button_Click"/>
+                  Click="Convert_Files_Button_Click"/>
             <Button x:Name="DownloadFileButton"  
                   Content="Download" 
                   Margin="5"
                   Height="25"
                   Width="65" 
                   Background="#1589FF"
-                  Click="Download_Files"/>
-            <Button x:Name="BrowseFileButton"  
-                    Content="Reset" 
+                  Click="Download_Converted_Files"/>
+            <Button x:Name="SingleFileButton"  
+                    Content="Select File" 
                     Margin="5"
                     Height="25"
                     Width="65" 
                     Background="White"
-                    Click="Browse_File_Button_Click"/>
+                    Click="Single_File_Button_Click"/>
             <Button x:Name="PopulateButton"  
                     Content="Populate" 
                     Margin="5"
