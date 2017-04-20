@@ -20,25 +20,14 @@ namespace PlanetConverter
     /// </summary>
     public partial class MainWindow : Window
         {
-        #region
+        #region --global
         private string _currentIngestedPlanetFileName;
         private string _currentIngestedPlanetFile;
-
-
-
-
         private string _appSrcPlnDir;
         private string _ingestDir = $"C:\\Code\\PRJ-2_PlanetConvert\\PlanetFilesIngestDir\\";
         private string _appTargetDir;
-        private readonly string _manufacturer = $"Amphenol";
         private string[] _fileEntries;
-
-        //private string[] _celCadConvertedFileEntriesV;
-        //private string[] _celCadConvertedFileEntriesH;
-
-        //private static readonly ILog Log =
-        //        LogManager.GetLogger( System.Reflection.MethodBase.GetCurrentMethod( ).DeclaringType );
-
+        private string[] _words;
 
         #region T/F
         private bool _isAtollExNew = true;
@@ -88,13 +77,11 @@ namespace PlanetConverter
         #endregion
 
         #region All Fields
-
-        private string _antennaType;
+        private string _antWidth;
         private string _atvswr;
         private string _azimuthDisplay;
         private string _beamwidth;
         private string _comments;
-        private string _class;
         private string _date;
         private string _dateMesured;
         private string _depth;
@@ -103,14 +90,9 @@ namespace PlanetConverter
         private string _electricalTilt;
         private string _family;
         private string _fccId;
-        //private string Fmax;
-        //private string Fmin;
-        private string Frequency;
-        private string _frontToBack;
         private string _gain;
         private string _antHeight;
         private string _highFrequency;
-        private string _horizontalBeamWidth;
         private string _length;
         private string _lobeTilt;
         private string _lowFrequency;
@@ -122,23 +104,19 @@ namespace PlanetConverter
         private string _mfrId;
         private string _minGain;
         private string _minFrequency;
-       // private string _patternElectricalTilt;
-       // private string _patternPostingDate;
         private string _polarization;
         private string _size;
         private string _time;
         private string _upperFrequency;
-        private string _verticalBeamWidth;
         private string _weight;
-        private string _antWidth;
         private string _windArea;
 
         #endregion
 
         #region File Name / Substring 
-        private string _color;
-        private string _frequency;
-        private string _model;
+
+
+
         private string[] _name;
         private string _polRes;
         private string _tiltValue;
@@ -171,493 +149,59 @@ namespace PlanetConverter
         #endregion
 
         #region ATOLL Var
-        private NsExcel.Worksheet _exSheetPostOpen;
+        private NsExcel.Worksheet _eXlBkOpen;
         private NsExcel.Workbook _workBook;
         private List<AtollPillaLst> _datos = new List<AtollPillaLst>( );
         private int _rowCt = 2;
-        private int _datOsCt = 0;
+        private int _datOsCt;
         #endregion
 
         public MainWindow( )
             {
             InitializeComponent( );
             }
-
-        #region Single Conversion Methods
-        private void ConvertToAircom( )
-            {
-            ResultsLabel.Content = string.Empty;
-            SaveResults.Text = string.Empty;
-
-            if (AircomCheckBox.IsChecked.GetValueOrDefault( ))
-                {
-
-                var textBoxCheck = new TextBox[]
-                {
-                    CommentsTextBox,
-                    DateTextBox,
-                    DescriptionTextBox,
-                    FrequencyTextBox,
-                    FrontToBackTextBox,
-                    HorizontalBeamWidthTextBox,
-                    MaxFrequencyTextBox,
-                    MaxGainTextBox,
-                    MinFrequencyTextBox,
-                    PolarizationTextBox,
-                    VerticalBeamWidthTextBox
-                };
-
-                if (textBoxCheck.Any( tb => tb.Text == string.Empty ))
-                    {
-                    ResultsLabel.Content = $"Problem during conversion process";
-                    SaveResults.Text =
-                        $"For Aircom ensure these fields have value :" +
-                        $"\nComments :\nDate :\nDescription :\nFrequency :" +
-                        $"\nFront To Back :\nHorizontal Beam Width :\nMax Frequency :" +
-                        $"\nMax Gain :\nMin Frequency :\nPolarization :\nVertical Beam Width :\n";
-                    }
-                else
-                    {
-
-                    try
-                        {
-                        string[] seperators = { "\r\n" };
-                        string valOne = _currentIngestedPlanetFile;
-                        string commaValue = valOne.Replace( "\t", "\r\n" );
-                        string[] words = commaValue.Split( seperators, StringSplitOptions.RemoveEmptyEntries );
-
-                        int totalWords = words.Length;
-                        int countOne = -1;
-                        int countTwo = -1;
-
-                        string saveStateOne = string.Empty;
-                        string saveStateTwo = string.Empty;
-
-                        if (totalWords <= 0)
-                            {
-                            SaveResults.Text =
-                                $"Problem Ingesting File. Total Words : {totalWords}\nPlease try browsing for valid planet file. ";
-
-                            }
-
-                        string start = $"NAME\t" + words[1] + "\r\n" +
-                                       "MAKE\tAmphenol\r\n" +
-                                       "FREQUENCY\t" + FrequencyTextBox.Text + "\r\n" +
-                                       "H_WIDTH " + HorizontalBeamWidthTextBox.Text + "\r\n" +
-                                       "H_WIDTH " + VerticalBeamWidthTextBox.Text + "\r\n" +
-                                       "FRONT_TO_BACK " + FrontToBackTextBox.Text + "\r\n" +
-                                       "POLARIZATION\t" + PolarizationTextBox.Text + "\r\n" +
-                                       "GAIN\t" + MaxGainTextBox.Text + " dBi\r\n" +
-                                       "TILT" + "\tELECTRICAL\r\n" +
-                                       "COMMENTS\t" + CommentsTextBox.Text + "\r\n" +
-                                       "HORIZONTAL\t360";
-
-                        for (int i = 21; i <= 740; i += 2)
-                            {
-                            countOne++;
-                            string valTwo = words[i];
-                            double dblVal1 = Convert.ToDouble( valTwo );
-                            saveStateOne += countOne.ToString( ) + "\t" + dblVal1.ToString( "0.0" ) + "\r\n";
-                            }
-                        for (int j = 743; j < totalWords; j += 2)
-                            {
-                            countTwo++;
-                            string valThree = words[j];
-                            double dblVal2 = Convert.ToDouble( valThree );
-                            saveStateTwo += countTwo.ToString( ) + "\t" + dblVal2.ToString( "0.0" ) + "\r\n";
-                            }
-
-                        ReadResults.Text = string.Empty;
-
-                        _airComConversionResults = SaveResults.Text =
-                            start + "\r\n" + saveStateOne + "VERTICAL\t360\r\n" + saveStateTwo;
-
-                        if (_airComConversionResults.Length >= 1)
-                            {
-                            ResultsLabel.Content = $"Aircom conversion successful";
-                            }
-                        }
-                    catch (Exception db)
-                        {
-                        SaveResults.Text = db.Message;
-                        }
-                    }
-                }
-            }
-
-        private void ConvertToCe4( )
-            {
-            ResultsLabel.Content = string.Empty;
-            SaveResults.Text = string.Empty;
-
-            if (Ce4CheckBox.IsChecked.GetValueOrDefault( ))
-                {
-
-                var textBoxCheck = new TextBox[]
-                {
-                    CommentsTextBox,
-                    DateTextBox,
-                    DateMesuredTextBox,
-                    DescriptionTextBox,
-                    FrequencyTextBox,
-                    FrontToBackTextBox,
-                    HorizontalBeamWidthTextBox,
-                    MaxFrequencyTextBox,
-                    MaxGainTextBox,
-                    MinFrequencyTextBox,
-                    PolarizationTextBox,
-                    VerticalBeamWidthTextBox
-                };
-
-                if (textBoxCheck.Any( tb => tb.Text == string.Empty ))
-                    {
-                    ResultsLabel.Content = $"Problem during conversion process";
-                    SaveResults.Text =
-                        $"For Ce4 ensure these fields have value :\nComments :\nDate :\nDate Measured :\nDescription :\nFrequency :\nFront To Back :\nHorizontal Beam Width :\nMax Frequency :\nMax Gain :\nMin Frequency :\nPolarization :\nVertical Beam Width :\n";
-                    }
-                else
-                    {
-
-                    try
-                        {
-                        string[] separators = { "\r\n" };
-
-                        string value = _currentIngestedPlanetFile;
-                        string commavalue = value.Replace( "\t", "\r\n" );
-                        string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                        int totalWords = words.Length;
-                        int cont1 = -1;
-                        int cont3 = -91;
-                        int cont2 = -1;
-                        int cont4 = -91;
-                        int cont5 = -1;
-
-                        string saveState = "";
-                        string saveState2 = "";
-                        string saveState3 = "";
-                        string saveState4 = "";
-                        string saveState5 = "";
-
-                        if (totalWords <= 0)
-                            {
-                            //todo logging
-                            }
-
-                        DateTime dateMeasured = Convert.ToDateTime( DateTextBox.Text );
-                        string start = "|MANUF|Amphenol|\r\n" +
-                                       "|MODEL|" + words[1] + "|\r\n" +
-                                       "|FILE|" + words[1] + "|\r\n" +
-                                       "|DESCR|" + DescriptionTextBox.Text + "|\r\n" +
-                                       "|FCC ID|\r\n" +
-                                       "|REVERSE ID|\r\n" +
-                                       "|DATE|" + dateMeasured.ToShortDateString( ) + "|\r\n" +
-                                       "|MANUF ID|Amphenol|\r\n" +
-                                       "|FREQ|" + MinFrequencyTextBox.Text + "-" + MaxFrequencyTextBox.Text +
-                                       " MHz|\r\n" +
-                                       "|DBD/DBI Flag|dBd|\r\n" +
-                                       "|POLARIZATION|" + PolarizationTextBox.Text + "|\r\n" +
-                                       "|HORIZ BEAM WIDTH|" + words[7] + "|\r\n" +
-                                       "|VERT BEAM WIDTH|" + words[9] + "|\r\n" +
-                                       "|HORIZ OFFSET|0|\r\n" +
-                                       "|HORIZ|0|360|";
-                        //Horizontal
-                        for (int i = 21; i <= 739; i += 2)
-                            {
-                            cont1++;
-                            string newvalue = words[i];
-                            double dblVal = Convert.ToDouble( MaxGainTextBox.Text ) - Convert.ToDouble( newvalue );
-                            saveState += "\t" + cont1.ToString( ) + "\t" + dblVal.ToString( "0.000" ) + "\t" + "\r\n";
-                            }
-
-                        //Verticals 1
-                        for (int i = 1283; i <= totalWords; i += 2)
-                            {
-                            cont3++;
-                            string newvalue = words[i];
-                            double dblVal = (Convert.ToDouble( MaxGainTextBox.Text ) - Convert.ToDouble( newvalue ));
-                            saveState3 += "\t" + cont3 + "\t" + dblVal.ToString( "0.000" ) + "\t" + "\r\n";
-
-                            }
-                        for (int i = 743; i <= 923; i += 2)
-                            {
-                            cont2++;
-                            string newvalue = words[i];
-                            double dblVal = (Convert.ToDouble( MaxGainTextBox.Text ) - Convert.ToDouble( newvalue ));
-                            saveState2 += "\t" + cont2 + "\t" + dblVal.ToString( "0.000" ) + "\t" + "\r\n";
-
-                            }
-                        //Verticals 2
-                        Stack<string> stringQue = new Stack<string>( );
-                        for (int i = 1105; i <= 1283; i += 2)
-                            {
-                            string newvalue = words[i];
-                            double dblVal = (Convert.ToDouble( MaxGainTextBox.Text ) - Convert.ToDouble( newvalue ));
-                            stringQue.Push( dblVal.ToString( "0.000" ) );
-
-                            }
-                        foreach (string valor in stringQue)
-                            {
-                            cont4++;
-                            saveState4 += "\t" + cont4 + "\t" + valor + "\t" + "\r\n";
-                            }
-                        Stack<string> stringQue2 = new Stack<string>( );
-                        for (int i = 923; i < 1105; i += 2)
-                            {
-                            string newvalue = words[i];
-                            double valor = (Convert.ToDouble( MaxGainTextBox.Text ) - Convert.ToDouble( newvalue ));
-                            stringQue2.Push( valor.ToString( "0.000" ) );
-
-                            }
-                        foreach (string valor in stringQue2)
-                            {
-                            cont5++;
-                            saveState5 += "\t" + cont5 + "\t" + valor + "\t" + "\r\n";
-                            }
-
-                        _ce4ConversionResults =
-                            SaveResults.Text = start + "\r\n" + saveState + "|VERT|0|181| " + "\r\n" + saveState3 +
-                                               saveState2 + "|VERT|180|181|\r\n" + saveState4 + saveState5;
-
-                        SaveResults.Text = SaveResults.Text.Replace( "\t", "|" );
-                        if (_ce4ConversionResults.Length >= 1)
-                            {
-                            ResultsLabel.Content = $"Ce4 conversion successful";
-                            }
-                        }
-                    catch (Exception db)
-                        {
-                        SaveResults.Text = db.Message;
-                        }
-                    }
-                }
-            }
-
-        private void ConvertToCelCad( )
-            {
-            ResultsLabel.Content = string.Empty;
-            SaveResults.Text = string.Empty;
-
-            if (CelCadCheckBox.IsChecked.GetValueOrDefault( ))
-                {
-
-                var textBoxCheck = new TextBox[]
-                {
-                    DateTextBox,
-                    MaxGainTextBox,
-                    TimeTextBox
-                };
-                if (textBoxCheck.Any( tb => tb.Text == string.Empty ))
-                    {
-                    ResultsLabel.Content = $"Problem during conversion process";
-                    SaveResults.Text =
-                        $"For Ce4 ensure these fields have value :\nDate :\nMax Gain :\nTime :";
-                    }
-                else
-                    {
-                    try
-                        {
-                        string[] separators = { "\r\n" };
-                        var value = _currentIngestedPlanetFile;
-                        var commavalue = value.Replace( "\t", "\r\n" );
-                        string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                        var totalWords = words.Length;
-                        var cont1 = -1;
-                        var cont2 = 181;
-                        var cont3 = 1;
-
-                        var saveState = "";
-                        var saveState2 = "";
-                        var saveState3 = "";
-
-                        if (totalWords <= 0)
-                            {
-                            //todo loggoing?
-                            }
-                        string start = "LCC\r\n" +
-                                       DateTextBox.Text + "\r\n" +
-                                       TimeTextBox.Text + "\r\n" +
-                                       "Amphenol 815-399-0001\r\n" +
-                                       words[1] + "\r\n";
-
-                        saveState = CelCadReturnPattern( cont1, words, 21, 739, true, -1, -1 );
-                        saveState2 = CelCadReturnPattern( cont3, words, 743, 1101, false, 1, 1 );
-                        saveState3 = CelCadReturnPattern( cont2, words, 1103, totalWords, false, 1, 1 );
-
-                        ReadResults.Text = _celCadHorizontalConversionResults =
-                            start + words[7] + "\r\n" + "H\r\n0.00\r\n" + saveState + "*";
-                        SaveResults.Text = _celCadVerticalConversionResults =
-                            start + words[9] + "\r\n" + "V\r\n0.00\r\n" + saveState3 + saveState2 + "*";
-                        }
-                    catch (Exception db)
-                        {
-                            SaveResults.Text = db.Message;
-                        }
-                    }
-                }
-            }
-
-        private void DownloadCe4( )
-            {
-            try
-                {
-                if (Ce4CheckBox.IsChecked.GetValueOrDefault( ))
-                    {
-                    var fileName = string.Empty;
-                    fileName = _currentIngestedPlanetFileName;
-
-                    string[] separators = { "\r\n" };
-                    string value = _ce4ConversionResults;
-                    string commavalue = value.Replace( "\t", "\r\n" );
-                    string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                    var Ce4Dir = _appTargetDir + $"Ce4";
-
-                    //.VWA
-                    if (_ce4VwaChecked)
-                        {
-
-                        fileName = fileName.Substring( 0, fileName.LastIndexOf(
-                                       ".", StringComparison.Ordinal ) ) + ".vwa";
-
-                        if (!Directory.Exists( Ce4Dir )) Directory.CreateDirectory( Ce4Dir );
-
-                        if (!File.Exists( Ce4Dir + fileName ))
-                            {
-                            using (var tempVar = File.Create( fileName, 1024 ))
-                                {
-                                File.WriteAllText( $"{Ce4Dir}\\{fileName}", value );
-                                tempVar.Close( );
-                                }
-                            }
-                        }
-
-                    //.txt
-                    if (_ce4TxtChecked)
-                        {
-                        fileName = fileName.Substring( 0, fileName.LastIndexOf(
-                                       ".", StringComparison.Ordinal ) ) + ".txt";
-
-                        if (!Directory.Exists( Ce4Dir )) Directory.CreateDirectory( Ce4Dir );
-
-                        if (!File.Exists( Ce4Dir ))
-                            {
-                            if (!File.Exists( Ce4Dir + fileName ))
-                                {
-                                using (var tempVar = File.Create( fileName, 1024 ))
-                                    {
-                                    File.WriteAllText( $"{Ce4Dir}\\{fileName}", value );
-                                    tempVar.Close( );
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-            catch (Exception db)
-                {
-                    SaveResults.Text = db.Message;
-                }
-            }
-
-        private void DownloadCelCad( )
-            {
-            if (CelCadCheckBox.IsChecked.GetValueOrDefault( ))
-                {
-                string[] separators = { "\r\n" };
-                string value = _celCadHorizontalConversionResults;
-                string commavalue = value.Replace( "\t", "\r\n" );
-                string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-
-                var horzFileName =
-                    _currentIngestedPlanetFileName;
-
-                var celCadHorizontalDir = _appTargetDir + "CelCad_Horizontal";
-                if (!Directory.Exists( celCadHorizontalDir ))
-
-                    Directory.CreateDirectory( celCadHorizontalDir );
-
-                if (!File.Exists( celCadHorizontalDir + "\\" + horzFileName ))
-                    {
-                    using (var tempVar = File.Create( horzFileName, 1024 ))
-                        {
-                        File.WriteAllText( $"{celCadHorizontalDir}\\{horzFileName}", value );
-                        tempVar.Close( );
-                        }
-                    }
-
-                var vertFileName = _currentIngestedPlanetFileName;
-                string[] vertSeparators = { "\r\n" };
-                string vertValue = _celCadVerticalConversionResults;
-                string vertCommavalue = vertValue.Replace( "\t", "\r\n" );
-                string[] vertWords = vertCommavalue.Split( vertSeparators, StringSplitOptions.RemoveEmptyEntries );
-
-                var celCadVerticalDir = _appTargetDir + "CelCad_Vertical";
-                if (!Directory.Exists( celCadVerticalDir ))
-
-                    Directory.CreateDirectory( celCadVerticalDir );
-
-                if (!File.Exists( celCadVerticalDir + "\\" + vertFileName ))
-                    {
-                    using (var tempVar = File.Create( vertFileName, 1024 ))
-                        {
-                        File.WriteAllText( $"{celCadVerticalDir}\\{vertFileName}", vertValue );
-                        tempVar.Close( );
-                        }
-                    }
-                }
-            }
-        #endregion
-
+        
         #region Testing Methods
         private void PopulateButton_Click( object sender, RoutedEventArgs e )
             {
-            AntennaTypeTextBox.Text = $"RET";
-            ATVSWRTextBox.Text = $"2.0";
+            AtvswrTextBox.Text = $"2.0";
             AzimuthDisplayTextBox.Text = $"360";
             BeamwidthTextBox.Text = $"19";
-            ClassTextBox.Text = $"Top Of The Class ;) ";
-            CommentsTextBox.Text = $"dj Nichi d[C#]b d[SQL]b d[-!-]b d[GIT]b d[XaMl]b";
+            CommentsTextBox.Text = $"...Some droll commentary";
             DateTextBox.Text = $"4/18/2017";
             DateMesuredTextBox.Text = $"1/1/2016";
             DepthTextBox.Text = $"180";
             DescriptionTextBox.Text = $"Panel";
             DimensionsTextBox.Text = $"305";
             _electricalTilt = _tiltValue;
-            FamilyTextBox.Text = $"Xpol";
+            FamilyTextBox.Text = $"TWIN654";
             FccIdTextBox.Text = $"2AJQZ-AVS-X2015 ";
-            FrequencyTextBox.Text = _frequency;
-            FrontToBackTextBox.Text = $"33.97";
             GainTextBox.Text = $"15.8";
             HeightTextBox.Text = $"1298";
             _highFrequency = $"2400";
-            HorizontalBeamWidthTextBox.Text = $"68";
             LengthTextBox.Text = $"2.580";
             LobeTiltTextBox.Text = $"0";
             LowFrequencyTextBox.Text = $"696";
             _lowerFrequency = $"696";
             MaxFrequencyTextBox.Text = $"2400";
             MaxGainTextBox.Text = $"10.8";
-            _maxPower = $"420";
+            _maxPower = $"240";
             MeasFrequencyTextBox.Text = $"824";
             MinFrequencyTextBox.Text = $"696";
-            PatternPostingDateTextBox.Text = $"1/1/2016";
             PolarizationTextBox.Text = $"+45";
             _size = $"3";
             TimeTextBox.Text = $"3:33am";
             _upperFrequency = $"2400";
-            VerticalBeamWidthTextBox.Text = $"7.5";
             WidthTextBox.Text = $"305";
             WeightTextBox.Text = $"305";
             WindAreaTextBox.Text = $".7";
             }
         private void MinimizeGuiCalls( )
             {
-            _antennaType = AntennaTypeTextBox.Text;
-            _atvswr = ATVSWRTextBox.Text;
+            _atvswr = AtvswrTextBox.Text;
             _azimuthDisplay = AzimuthDisplayTextBox.Text;
             _beamwidth = BeamwidthTextBox.Text;
             _comments = CommentsTextBox.Text;
-            _class = ClassTextBox.Text;
             _date = DateTextBox.Text;
             _dateMesured = DateTextBox.Text;
             _depth = DepthTextBox.Text;
@@ -666,12 +210,9 @@ namespace PlanetConverter
             _electricalTilt = _tiltValue;
             _family = FamilyTextBox.Text;
             _fccId = FccIdTextBox.Text;
-            Frequency = FrequencyTextBox.Text;
-            _frontToBack = FrontToBackTextBox.Text;
             _gain = GainTextBox.Text;
             _antHeight = HeightTextBox.Text;
             _highFrequency = HighFrequencyTextBox.Text;
-            _horizontalBeamWidth = HorizontalBeamWidthTextBox.Text;
             _length = LengthTextBox.Text;
             _lobeTilt = LobeTiltTextBox.Text;
             _lowFrequency = LowFrequencyTextBox.Text;
@@ -687,7 +228,6 @@ namespace PlanetConverter
             _size = SizeTextBox.Text;
             _time = TimeTextBox.Text;
             _upperFrequency = UpperFrequencyTextBox.Text;
-            _verticalBeamWidth = VerticalBeamWidthTextBox.Text;
             _antWidth = WidthTextBox.Text;
             _weight = WeightTextBox.Text;
             _windArea = WindAreaTextBox.Text;
@@ -772,13 +312,8 @@ namespace PlanetConverter
                 var trimmedFileName = fileName.Split( '(' )[0];
                 string[] lines = Regex.Split( trimmedFileName, "-" );
 
-                if (lines.Length == 5)
-                    {
-                    _model = lines[0];
-                    _tiltValue = lines[1];
-                    _frequency = lines[2];
-                    _color = lines[3];
-                    }
+                if (lines.Length == 5) _tiltValue = lines[1];
+
 
                 var regEx = new Regex( $"T" + "[0-9]" + "[0-9]" );
                 var tiltResult = regEx.Matches( lines[1] );
@@ -827,102 +362,68 @@ namespace PlanetConverter
 
         private void Src_Dir_Button_Click( object sender, RoutedEventArgs e )
             {
-            using (var fbd = new FolderBrowserDialog( ))
+            try
                 {
-                MinimizeGuiCalls( );
-                var dirIsValid = fbd.ShowDialog( );
-                if (dirIsValid == System.Windows.Forms.DialogResult.OK &&
-                    !string.IsNullOrWhiteSpace( fbd.SelectedPath ))
+                using (var fbd = new FolderBrowserDialog( ))
                     {
-                    _appSrcPlnDir = fbd.SelectedPath;
+                    MinimizeGuiCalls( );
+                    var dirIsValid = fbd.ShowDialog( );
+                    if (dirIsValid == System.Windows.Forms.DialogResult.OK &&
+                        !string.IsNullOrWhiteSpace( fbd.SelectedPath ))
+                        {
+                        _appSrcPlnDir = fbd.SelectedPath;
+                        }
                     }
+                }
+            catch (DirectoryNotFoundException db)
+                {
+                SaveResults.Text = $"Source directory not valid\n" +
+                                   $"Please select a valid directory\n"
+                                   + db.Message;
                 }
             }
         private void Target_Dir_Button_Click( object sender, RoutedEventArgs e )
             {
-            using (var fbd = new FolderBrowserDialog( ))
+            try
                 {
-                MinimizeGuiCalls( );
-                var targetIsValid = fbd.ShowDialog( );
-                if (targetIsValid == System.Windows.Forms.DialogResult.OK &&
-                    !string.IsNullOrWhiteSpace( fbd.SelectedPath ))
+                using (var fbd = new FolderBrowserDialog( ))
                     {
-                    _appTargetDir = fbd.SelectedPath + $"\\";
+                    MinimizeGuiCalls( );
+                    var targetIsValid = fbd.ShowDialog( );
+                    if (targetIsValid == System.Windows.Forms.DialogResult.OK &&
+                        !string.IsNullOrWhiteSpace( fbd.SelectedPath ))
+                        {
+                        _appTargetDir = fbd.SelectedPath + $"\\";
 
-                    GetAllFilesInDirectory( _appSrcPlnDir );
+                        GetAllFilesInDirectory( _appSrcPlnDir );
+                        }
                     }
                 }
-            }
+            catch (DirectoryNotFoundException db)
+                {
 
-        private void Download_Converted_Files( object sender, RoutedEventArgs e )
-            {
-            if (_aircomChecked)
-                {
-                DownloadAircom( );
-                }
-            if (_ce4Checked)
-                {
-                DownloadCe4Batch( );
-                }
-            if (_celCadChecked)
-                {
-                ConvertToCelCadBatchDownload( _model, _trimmedTiltVal, _frequency, _polarization );
-                }
-
-            if (_geoPlanChecked)
-                {
-                DownloadGeoPlanBatch( );
-                }
-            if (_granetChecked)
-                {
-                DownloadGranetBatch( );
-                }
-            if (_hodiaxChecked)
-                {
-                DownloadHodiaxHorizontalBatch( );
-                DownloadHodiaxVerticalBatch( );
-                }
-            if (_hydraChecked)
-                {
-                DownloadHydra( );
-                }
-            if (_lccNetChecked)
-                {
-                DownloadLccBatchTest( );
-                }
-            if (_netPlanChecked)
-                {
-                DownloadNetPlanBatch( );
-                }
-            if (_odysseyChecked)
-                {
-                DownloadOdysseyBatch( );
-                }
-            if (_pathLossChecked)
-                {
-                DownloadPathLossBatch( );
-                }
-            if (_wizardChecked)
-                {
-                DownLoadWizardBatch( );
+                SaveResults.Text = $"Target directory not valid\n" +
+                                   $"Please select a valid output directory" + db.Message;
                 }
             }
-
-
+        
         private void GetAllFilesInDirectory( string filePath )
             {
+
             _fileEntries = Directory.GetFiles( filePath );
+
             MinimizeGuiCalls( );
 
             foreach (var fileLocation in _fileEntries)
                 {
                 _currentIngestedPlanetFileName = string.Empty;
+                _words = new[] { string.Empty };
                 var fileName = _currentIngestedPlanetFileName = Path.GetFileName( fileLocation );
 
                 //substring
                 if (fileName != null)
                     {
-                    _trimmedFileName = fileName.Split( '(' )[0];
+                    _trimmedFileName = fileName.Split( '.' )[0];
                     _name = Regex.Split( _trimmedFileName, "-" );
 
                     if (_name.Length == 5)
@@ -930,12 +431,12 @@ namespace PlanetConverter
                         //method #1
                         _polarization = fileName.Split( '(', ')' )[1];
 
-                        _model = _name[0];
+
                         _tiltValue = _name[1];
                         _trimmedTiltVal = _tiltValue.Split( 'T', '-' )[1];
-                        _frequency = _name[2];
+
                         }
-                    
+
                     //fileName
                     var pathToCheck = $"{_ingestDir}{fileName}";
 
@@ -958,88 +459,104 @@ namespace PlanetConverter
                             var readerObj = new StreamReader( fileObj );
                             var text = readerObj.ReadToEnd( );
                             readerObj.Close( );
+                            fileObj.Close( );
 
                             _currentIngestedPlanetFile = text;
                             }
                         }
                     catch (FileNotFoundException db)
                         {
-                        Console.WriteLine( db.Message );
+                        SaveResults.Text = $"GetAllFiles encountered an error\n" +
+                                           $"Please check the following\n" +
+                                           $"Source directory is valid\n" +
+                                           $"Target directory is valid\n" +
+                                           $".pln files are valid format\n" + db.Message;
                         }
                     }
+                try
+                    {
+                    if (_aircomChecked)
+                        {
+                        ConvertToAircomBatch( _tiltValue, _polarization );
+                        DownloadAircom( );
+                        }
+                    if (_atollChecked)
+                        {
+                        ConvertToAtollBatch( );
+                        }
+                    if (_ce4Checked)
+                        {
+                        ConvertToCe4Batch( _polarization );
+                        DownloadCe4Batch( );
+                        }
+                    if (_celCadChecked)
+                        {
+                        ConvertToCelCadBatchDownload( );
+                        }
+                    if (_celPlanChecked)
+                        {
+                        ConvertToCelPlanBatch( );
+                        DownloadCelPlanBatch( );
+                        }
 
-                if (_aircomChecked)
-                    {
-                    ConvertToAircomBatch( _model, _tiltValue, _frequency, _polarization );
-                    DownloadAircom( );
+                    if (_geoPlanChecked)
+                        {
+                        ConvertToGeoPlanBatch( );
+                        DownloadGeoPlanBatch( );
+                        }
+                    if (_granetChecked)
+                        {
+                        ConvertToGranetBatch( );
+                        DownloadGranetBatch( );
+                        }
+                    if (_hodiaxChecked)
+                        {
+                        ConvertToHodiaxBatch( );
+                        DownloadHodiaxHorizontalBatch( );
+                        DownloadHodiaxVerticalBatch( );
+                        }
+                    if (_hydraChecked)
+                        {
+                        ConvertToHydraBatch( );
+                        DownloadHydra( );
+                        }
+                    if (_lccNetChecked)
+                        {
+                        ConvertToLccBatchTest( );
+                        DownloadLccBatchTest( );
+                        }
+                    if (_netPlanChecked)
+                        {
+                        ConvertToNetPlanBatch( );
+                        DownloadNetPlanBatch( );
+                        }
+                    if (_odysseyChecked)
+                        {
+                        ConvertToOdysseyBatch( );
+                        DownloadOdysseyBatch( );
+                        }
+                    if (_pathLossChecked)
+                        {
+                        ConvertToPathLossBatch( );
+                        DownloadPathLossBatch( );
+                        }
+                    if (_wizardChecked)
+                        {
+                        ConvertToWizardBatch( );
+                        DownLoadWizardBatch( );
+                        }
                     }
-                if (_atollChecked)
+                catch (InvalidOperationException db)
                     {
-                    ConvertToAtollBatch( );
-                    }
-                if (_ce4Checked)
-                    {
-                    ConvertToCe4Batch( _model, _polarization );
-                    DownloadCe4Batch( );
-                    }
-                if (_celCadChecked)
-                    {
-                    ConvertToCelCadBatchDownload( _model, _trimmedTiltVal, _frequency, _polarization );
-                    ConvertToCelPlanBatch( );
-                    DownloadCelPlanBatch( );
-                    }
-
-                if (_geoPlanChecked)
-                    {
-                    ConvertToGeoPlanBatch( );
-                    DownloadGeoPlanBatch( );
-                    }
-                if (_granetChecked)
-                    {
-                    ConvertToGranetBatch( );
-                    DownloadGranetBatch( );
-                    }
-                if (_hodiaxChecked)
-                    {
-                    ConvertToHodiaxBatch( );
-                    DownloadHodiaxHorizontalBatch( );
-                    DownloadHodiaxVerticalBatch( );
-                    }
-                if (_hydraChecked)
-                    {
-                    ConvertToHydraBatch( );
-                    DownloadHydra( );
-                    }
-                if (_lccNetChecked)
-                    {
-                    ConvertToLccBatchTest( );
-                    DownloadLccBatchTest( );
-                    }
-                if (_netPlanChecked)
-                    {
-                    ConvertToNetPlanBatch( );
-                    DownloadNetPlanBatch( );
-                    }
-                if (_odysseyChecked)
-                    {
-                    ConvertToOdysseyBatch( );
-                    DownloadOdysseyBatch( );
-                    }
-                if (_pathLossChecked)
-                    {
-                    ConvertToPathLossBatch( );
-                    DownloadPathLossBatch( );
-                    }
-                if (_wizardChecked)
-                    {
-                    ConvertToWizardBatch( );
-                    DownLoadWizardBatch( );
+                    SaveResults.Text = $"Error encountered with File Ingest || download\n" +
+                                       $"Please try again || restart the application\n" +
+                                       $"Please validate working directories are clean"
+                                       + db.Message;
                     }
                 }
             }
-
-
-        private void ConvertToAircomBatch( string model, string tiltValue, string frequency, string polarization )
+        
+        private void ConvertToAircomBatch( string tiltValue, string polarization )
             {
             if (_aircomChecked)
                 {
@@ -1048,9 +565,9 @@ namespace PlanetConverter
                     string[] seperators = { "\r\n" };
                     var valOne = _currentIngestedPlanetFile;
                     var commaValue = valOne.Replace( "\t", "\r\n" );
-                    string[] words = commaValue.Split( seperators, StringSplitOptions.RemoveEmptyEntries );
+                    _words = commaValue.Split( seperators, StringSplitOptions.RemoveEmptyEntries );
 
-                    var totalWords = words.Length;
+                    var totalWords = _words.Length;
                     var countOne = -1;
                     var countTwo = -1;
 
@@ -1059,15 +576,14 @@ namespace PlanetConverter
 
                     if (totalWords <= 0)
                         {
-                        //todo logging
-
+                        SaveResults.Text = $"Aircom {totalWords} Empty\nCheck file source is correct";
                         }
-                    var start = $"NAME\t" + words[1] + "\r\n" +
-                                "MAKE\t" + model + "\tAmphenol\r\n" +
-                                "FREQUENCY\t" + frequency + "\r\n" +
-                                "H_WIDTH " + _horizontalBeamWidth + "\r\n" +
-                                "H_WIDTH " + _verticalBeamWidth + "\r\n" +
-                                "FRONT_TO_BACK " + _frontToBack + "\r\n" +
+                    var start = $"NAME\t" + _words[1] + "\r\n" +
+                                "MAKE\t" + _words[3] + "\tAmphenol\r\n" +
+                                "FREQUENCY\t" + _words[5] + "\r\n" +
+                                "H_WIDTH " + _words[7] + "\r\n" +
+                                "H_WIDTH " + _words[9] + "\r\n" +
+                                "FRONT_TO_BACK " + _words[11] + "\r\n" +
                                 "POLARIZATION\t" + polarization + "\r\n" +
                                 "GAIN\t" + _maxGain + " dBi\r\n" +
                                 "TILT\t" + tiltValue + "\tELECTRICAL\r\n" +
@@ -1077,23 +593,26 @@ namespace PlanetConverter
                     for (int i = 21; i <= 740; i += 2)
                         {
                         countOne++;
-                        var valTwo = words[i];
+                        var valTwo = _words[i];
                         var dblVal1 = Convert.ToDouble( valTwo );
                         saveStateOne += countOne.ToString( ) + "\t" + dblVal1.ToString( "0.0" ) + "\r\n";
                         }
                     for (var j = 743; j < totalWords; j += 2)
                         {
                         countTwo++;
-                        var valThree = words[j];
+                        var valThree = _words[j];
                         var dblVal2 = Convert.ToDouble( valThree );
                         saveStateTwo += countTwo.ToString( ) + "\t" + dblVal2.ToString( "0.0" ) + "\r\n";
                         }
 
                     _airComConversionResults = start + "\r\n" + saveStateOne + "VERTICAL\t360\r\n" + saveStateTwo;
                     }
-                catch (Exception db)
+                catch (FormatException db)
                     {
-                    // TODO LOGGING
+                    SaveResults.Text = $"Aircom Conversion Format Exception\n" +
+                                       $"Please check .pln is valid\n" +
+                                       $"Please check values in 'Textboxes' are correct\n"
+                                       + db.Message;
                     }
                 }
             }
@@ -1106,7 +625,7 @@ namespace PlanetConverter
                     string[] seperators = { $"\r\n" };
                     var value = _airComConversionResults;
                     var commaValue = value.Replace( "\t", "\r\n" );
-                    string[] words = commaValue.Split( seperators, StringSplitOptions.RemoveEmptyEntries );
+                    _words = commaValue.Split( seperators, StringSplitOptions.RemoveEmptyEntries );
 
                     var fileName = string.Empty;
 
@@ -1123,24 +642,24 @@ namespace PlanetConverter
 
                     if (!File.Exists( aircomDir + "\\" + fileName ))
                         {
-                        using (var tempVar = File.Create( words[1], 1024 ))
+                        using (var tempVar = File.Create( _words[1], 1024 ))
                             {
                             File.WriteAllText( $"{aircomDir}\\{fileName}", value );
                             tempVar.Close( );
                             }
-                        //todo    Validate      filename=" + words[1] + ".txt");
-                        //todo LOGGING
                         }
-
                     }
                 }
             catch (Exception db)
                 {
-                ResultsLabel.Content = db.Message + $" : Aircom Download Process";
+                SaveResults.Text = $"Aircom Download Encountered an error\n" +
+                                   $"Please Check Directory is valid\n" +
+                                   $"Please Ensure You have Write Access"
+                                   + db.Message;
                 }
             }
 
-        private void ConvertToCe4Batch( string model, string polarization )
+        private void ConvertToCe4Batch( string polarization )
             {
             if (_ce4Checked)
                 {
@@ -1150,8 +669,8 @@ namespace PlanetConverter
 
                     var value = _currentIngestedPlanetFile;
                     var commavalue = value.Replace( "\t", "\r\n" );
-                    string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                    var totalWords = words.Length;
+                    _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                    var totalWords = _words.Length;
                     var cont1 = -1;
                     var cont3 = -91;
                     var cont2 = -1;
@@ -1166,13 +685,13 @@ namespace PlanetConverter
 
                     if (totalWords <= 0)
                         {
-                        //TODO LOGGING !!!!!!
+                        SaveResults.Text = $"Ce4 {totalWords} Empty\nCheck file source is correct";
                         }
 
                     var dateMeasured = Convert.ToDateTime( _dateMesured );
                     var start = "|MANUF|Amphenol|\r\n" +
-                                "|MODEL|" + model + "|\r\n" +
-                                "|FILE|" + words[1] + "|\r\n" +
+                                "|MODEL|" + _words[1] + "|\r\n" +
+                                "|FILE|" + _words[1] + "|\r\n" +
                                 "|DESCR|" + _description + "|\r\n" +
                                 "|FCC ID|\r\n" +
                                 "|REVERSE ID|\r\n" +
@@ -1182,15 +701,15 @@ namespace PlanetConverter
                                 " MHz|\r\n" +
                                 "|DBD/DBI Flag|dBd|\r\n" +
                                 "|POLARIZATION|" + polarization + "|\r\n" +
-                                "|HORIZ BEAM WIDTH|" + _horizontalBeamWidth + "|\r\n" +
-                                "|VERT BEAM WIDTH|" + _verticalBeamWidth + "|\r\n" +
+                                "|HORIZ BEAM WIDTH|" + _words[7] + "|\r\n" +
+                                "|VERT BEAM WIDTH|" + _words[9] + "|\r\n" +
                                 "|HORIZ OFFSET|0|\r\n" +
                                 "|HORIZ|0|360|";
                     //Horizontal
                     for (var i = 21; i <= 739; i += 2)
                         {
                         cont1++;
-                        var newValue = words[i];
+                        var newValue = _words[i];
                         var dblVal = Convert.ToDouble( _maxGain ) - Convert.ToDouble( newValue );
                         saveState += "\t" + cont1.ToString( ) + "\t" + dblVal.ToString( "0.000" ) + "\t" + "\r\n";
                         }
@@ -1199,7 +718,7 @@ namespace PlanetConverter
                     for (var i = 1283; i <= totalWords; i += 2)
                         {
                         cont3++;
-                        var newValue = words[i];
+                        var newValue = _words[i];
                         var dblVal = (Convert.ToDouble( _maxGain ) - Convert.ToDouble( newValue ));
                         saveState3 += "\t" + cont3 + "\t" + dblVal.ToString( "0.000" ) + "\t" + "\r\n";
 
@@ -1207,7 +726,7 @@ namespace PlanetConverter
                     for (var i = 743; i <= 923; i += 2)
                         {
                         cont2++;
-                        var newValue = words[i];
+                        var newValue = _words[i];
                         var dblVal = (Convert.ToDouble( _maxGain ) - Convert.ToDouble( newValue ));
                         saveState2 += "\t" + cont2 + "\t" + dblVal.ToString( "0.000" ) + "\t" + "\r\n";
 
@@ -1216,7 +735,7 @@ namespace PlanetConverter
                     Stack<string> stringQue = new Stack<string>( );
                     for (var i = 1105; i <= 1283; i += 2)
                         {
-                        var newValue = words[i];
+                        var newValue = _words[i];
                         var dblVal = (Convert.ToDouble( _maxGain ) - Convert.ToDouble( newValue ));
                         stringQue.Push( dblVal.ToString( "0.000" ) );
 
@@ -1229,7 +748,7 @@ namespace PlanetConverter
                     Stack<string> stringQue2 = new Stack<string>( );
                     for (var i = 923; i < 1105; i += 2)
                         {
-                        var newValue = words[i];
+                        var newValue = _words[i];
                         var valor = (Convert.ToDouble( _maxGain ) - Convert.ToDouble( newValue ));
                         stringQue2.Push( valor.ToString( "0.000" ) );
 
@@ -1244,9 +763,12 @@ namespace PlanetConverter
                         start + "\r\n" + saveState + "|VERT|0|181| " + "\r\n" + saveState3 + saveState2 +
                         "|VERT|180|181|\r\n" + saveState4 + saveState5;
                     }
-                catch (Exception db)
+                catch (FormatException db)
                     {
-                    // TODO LOGGING
+                    SaveResults.Text = $"Ce4 Conversion Format Exception\n" +
+                                       $"Please check .pln is valid\n" +
+                                       $"Please check values in 'Textboxes' are correct\n"
+                                       + db.Message;
                     }
                 }
             }
@@ -1263,7 +785,7 @@ namespace PlanetConverter
                     string[] separators = { "\r\n" };
                     string value = _ce4ConversionResults;
                     string commavalue = value.Replace( "\t", "\r\n" );
-                    string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                    _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
                     var Ce4Dir = _appTargetDir + $"Ce4";
 
                     //.VWA
@@ -1282,7 +804,7 @@ namespace PlanetConverter
                                 File.WriteAllText( $"{Ce4Dir}\\{fileName}", value );
                                 tempVar.Close( );
                                 }
-                            // TODO LOGGING  ResultsLabel.Content = $"File {fileName} download was successful";
+
                             }
                         }
 
@@ -1304,7 +826,7 @@ namespace PlanetConverter
                                     File.WriteAllText( $"{Ce4Dir}\\{fileName}", value );
                                     tempVar.Close( );
                                     }
-                                //TODO LOGGINGResultsLabel.Content = $"File {fileName} download was successful";
+
                                 }
                             }
                         }
@@ -1313,11 +835,14 @@ namespace PlanetConverter
 
             catch (Exception db)
                 {
-                // TODO LOGGING
+                SaveResults.Text = $"Ce4 Download Exception\n" +
+                                   $"Please Check Directory is valid\n" +
+                                   $"Please Ensure You have Write Access"
+                                   + db.Message;
                 }
             }
 
-        private void ConvertToCelCadBatchDownload( string model, string tiltValue, string frequency, string polarization )
+        private void ConvertToCelCadBatchDownload( )
             {
             if (_celCadChecked)
                 {
@@ -1326,8 +851,8 @@ namespace PlanetConverter
                     string[] separators = { "\r\n" };
                     var value = _currentIngestedPlanetFile;
                     var commavalue = value.Replace( "\t", "\r\n" );
-                    string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                    var totalWords = words.Length;
+                    _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                    var totalWords = _words.Length;
                     var cont1 = -1;
                     var cont2 = 181;
                     var cont3 = 1;
@@ -1340,17 +865,17 @@ namespace PlanetConverter
                                 _date + "\r\n" +
                                 _time + "\r\n" +
                                 "Amphenol 815-399-0001\r\n" +
-                                words[1] + "\r\n";
+                                _words[1] + "\r\n";
 
-                    saveState = CelCadReturnPattern( cont1, words, 21, 739, true, -1, -1 );
-                    saveState2 = CelCadReturnPattern( cont3, words, 743, 1101, false, 1, 1 );
-                    saveState3 = CelCadReturnPattern( cont2, words, 1103, totalWords, false, 1, 1 );
+                    saveState = CelCadReturnPattern( cont1, _words, 21, 739, true, -1, -1 );
+                    saveState2 = CelCadReturnPattern( cont3, _words, 743, 1101, false, 1, 1 );
+                    saveState3 = CelCadReturnPattern( cont2, _words, 1103, totalWords, false, 1, 1 );
 
                     _celCadHorizontalConversionResults =
-                        start + words[7] + "\r\n" + "H\r\n0.00\r\n" + saveState + "*";
+                        start + _words[7] + "\r\n" + "H\r\n0.00\r\n" + saveState + "*";
 
                     var celCadVertFileName = "";
-                    var celCadHorzFileName = celCadVertFileName = words[1];
+                    var celCadHorzFileName = celCadVertFileName = _words[1];
 
                     var celCadHorizontalDir = _appTargetDir + "CelCad_Horizontal";
 
@@ -1370,7 +895,7 @@ namespace PlanetConverter
                             }
                         }
 
-                    _celCadVerticalConversionResults = start + words[9] + "\r\n" + "V\r\n0.00\r\n" + saveState3 +
+                    _celCadVerticalConversionResults = start + _words[9] + "\r\n" + "V\r\n0.00\r\n" + saveState3 +
                                                        saveState2 + "*";
 
                     var celCadVerticalDir = _appTargetDir + "CelCad_Vertical";
@@ -1390,34 +915,45 @@ namespace PlanetConverter
                                 }
                             }
                         }
-
                     }
-                catch (Exception db)
+                catch (FormatException db)
                     {
-                    Console.Write( db.Message );
+                    SaveResults.Text = $"CellCad Conversion Format || Download Exception\n" +
+                                       $"Please check .pln is valid\n" +
+                                       $"Please check values in 'Textboxes' are correct\n"
+                                       + db.Message;
                     }
                 }
             }
         private string CelCadReturnPattern( int cont, string[] words, int start, int fin, bool increment, int negpos, int negpos2 )
             {
 
-            for (var i = start; i <= fin; i += 2)
+            try
                 {
-                if (increment)
+                for (var i = start; i <= fin; i += 2)
                     {
-                    cont++;
+                    if (increment)
+                        {
+                        cont++;
+                        }
+                    else
+                        {
+                        cont--;
+                        }
+                    var newvalue = words[i];
+                    var maxGainParsed = (Convert.ToDouble( _maxGain ) - (Convert.ToDouble( newvalue ))) * negpos;
+                    _celCadReturnPatternSaveState += cont + "\t" +
+                                                     (Convert.ToDouble( maxGainParsed ) * negpos2).ToString( "0.0" ) +
+                                                     "\r\n";
                     }
-                else
-                    {
-                    cont--;
-                    }
-                var newvalue = words[i];
-                var maxGainParsed = (Convert.ToDouble( _maxGain ) - (Convert.ToDouble( newvalue ))) * negpos;
-                _celCadReturnPatternSaveState += cont + "\t" +
-                                                 (Convert.ToDouble( maxGainParsed ) * negpos2).ToString( "0.0" ) +
-                                                 "\r\n";
                 }
-
+            catch (FormatException db)
+                {
+                SaveResults.Text = $"CellCad Return Pattern Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
+                }
             return _celCadReturnPatternSaveState;
             }
 
@@ -1429,21 +965,21 @@ namespace PlanetConverter
 
                 var value = _currentIngestedPlanetFile;
                 var commavalue = value.Replace( "\t", "\r\n" );
-                string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                var totalWords = words.Length;
+                _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                var totalWords = _words.Length;
                 var cont1 = -1;
                 var cont2 = -1;
                 var saveState = "";
                 var saveState2 = "";
 
                 var start = "[CelPlan DT ANT]\r\n" +
-                            "Mod:\t" + _currentIngestedPlanetFileName + "\r\n" +
+                            "Mod:\t" + _words[1] + "\r\n" +
                             "Man:\tAmphenol\r\n" +
                             "Dig:\t" + " " + "\r\n" +
                             "Dsc:\t" + _description + "\r\n" +
                             "Ngn:\t" + _maxGain + " dBd\r\n" +
-                            "Hbw:\t" + _horizontalBeamWidth + "°\r\n" +
-                            "Vbw:\t" + _verticalBeamWidth + "°\r\n" +
+                            "Hbw:\t" + _words[7] + "°\r\n" +
+                            "Vbw:\t" + _words[9] + "°\r\n" +
                             "Mnf:\t" + _minFrequency + " MHz\r\n" +
                             "Mxf:\t" + _maxFrequency + " MHz\r\n" +
                             "Sze:\t" + _size + " m\r\n" +
@@ -1453,22 +989,25 @@ namespace PlanetConverter
                 for (var i = 21; i <= 740; i += 2)
                     {
                     cont1++;
-                    var newValue = words[i];
+                    var newValue = _words[i];
                     var valor = (Convert.ToDouble( _maxGain ) - Convert.ToDouble( newValue ));
                     saveState += cont1.ToString( ) + "\t" + valor.ToString( "0.0" ) + "\r\n";
                     }
                 for (var i = 743; i < totalWords; i += 2)
                     {
                     cont2++;
-                    var newValue = words[i];
+                    var newValue = _words[i];
                     var dblVal = (Convert.ToDouble( _maxGain ) - Convert.ToDouble( newValue ));
                     saveState2 += cont2.ToString( ) + "\t" + dblVal.ToString( "0.0" ) + "\r\n";
                     }
                 _celPlanConversionResults = start + "\r\n" + saveState + "Van\tVgn\r\n" + saveState2;
                 }
-            catch (Exception db)
+            catch (FormatException db)
                 {
-                // TODO LOGGING
+                SaveResults.Text = $"CelPlan Conversion Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
                 }
             }
         private void DownloadCelPlanBatch( )
@@ -1502,13 +1041,15 @@ namespace PlanetConverter
                             File.WriteAllText( $"{celPlanDir}\\{fileName}", value );
                             tempFile.Close( );
                             }
-                        // todo LOGGING ResultsLabel.Content = $"File {words[1]} download was successful";
                         }
                     }
                 }
-            catch (Exception)
+            catch (Exception db)
                 {
-                //todo LOGGING!!! d[C#]b NiChi...!!!
+                SaveResults.Text = $"CelPlan Download Exception\n" +
+                                   $"Please Check Directory is valid\n" +
+                                   $"Please Ensure You have Write Access"
+                                   + db.Message;
                 }
             }
 
@@ -1520,8 +1061,8 @@ namespace PlanetConverter
 
                 var value = _currentIngestedPlanetFile;
                 var commavalue = value.Replace( "\t", "\r\n" );
-                string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                var totalWords = words.Length;
+                _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                var totalWords = _words.Length;
                 var cont1 = -1;
                 var cont2 = 0;
                 var cont3 = -180;
@@ -1532,14 +1073,14 @@ namespace PlanetConverter
 
                 var start = "VERIZON WIRELESS RFTOOLS ANTENNA" + "\r\n" +
                             "V5 \r\n" +
-                            "model_name:" + "\t" + words[1] + "\r\n" +
-                            "manufacturer:" + "\t" + words[3] + "\r\n" +
+                            "model_name:" + "\t" + _words[1] + "\r\n" +
+                            "manufacturer:" + "\t" + _words[3] + "\r\n" +
                             "description:" + "\t" + _description + "\r\n" +
-                            "antenna_type:" + "\t" + _antennaType + "\r\n" +
+                            "antenna_type:" + "\t" + _family + "\r\n" +
                             "polarization:" + "\t" + _polarization + "\r\n" +
                             "azimuth_display_offset_deg:" + "\t" + _azimuthDisplay + "\r\n" +
                             "date_measured:" + "\t" + dateMeasured.ToString( "dd-MMM-yy" ) + "\r\n" +
-                            "freq_measured_mhz:" + "\t" + words[5] + "\r\n" +
+                            "freq_measured_mhz:" + "\t" + _words[5] + "\r\n" +
                             "lower_freq_mhz:" + "\t" + _lowerFrequency + "\r\n" +
                             "upper_freq_mhz:" + "\t" + _upperFrequency + "\r\n" +
                             "electrical_tilt:" + "\t" + _tiltValue + "\r\n" +
@@ -1552,14 +1093,14 @@ namespace PlanetConverter
                 for (var i = 21; i <= 740; i += 2)
                     {
                     cont1++;
-                    var newValue = words[i];
+                    var newValue = _words[i];
                     var strValue = Convert.ToDouble( _maxGain ) - Convert.ToDouble( newValue );
                     saveState += cont1.ToString( "0.0" ) + "\t" + strValue.ToString( "0.0" ) + "\r\n";
                     }
                 Stack<string> strStack = new Stack<string>( );
                 for (var i = 743; i < 1103; i += 2)
                     {
-                    var newValue = words[i];
+                    var newValue = _words[i];
                     var strValue = Convert.ToDouble( _maxGain ) - Convert.ToDouble( newValue );
                     strStack.Push( strValue.ToString( "0.0" ) );
 
@@ -1574,7 +1115,7 @@ namespace PlanetConverter
                 Stack<string> strStack2 = new Stack<string>( );
                 for (var i = 1103; i <= totalWords - 1; i += 2)
                     {
-                    string newvalue = words[i];
+                    string newvalue = _words[i];
                     double valor = Convert.ToDouble( _maxGain ) - Convert.ToDouble( newvalue );
                     strStack2.Push( valor.ToString( "0.0" ) );
 
@@ -1588,11 +1129,13 @@ namespace PlanetConverter
                                             "\r\n" + saveState2 + saveState3 + "END";
                 //txtGuardar.Text = guardar3;
                 }
-            catch (Exception)
+            catch (FormatException db)
                 {
-                //TODO LOGGING 
+                SaveResults.Text = $"GeoPlan Conversion Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
                 }
-
             }
         private void DownloadGeoPlanBatch( )
             {
@@ -1628,7 +1171,7 @@ namespace PlanetConverter
                                 File.WriteAllText( $"{geoPlanDir}\\{fileName}", value );
                                 tempVar.Close( );
                                 }
-                            // TODO LOGGING  ResultsLabel.Content = $"File {fileName} download was successful";
+
                             }
                         }
 
@@ -1650,17 +1193,19 @@ namespace PlanetConverter
                                     File.WriteAllText( $"{geoPlanDir}\\{fileName}", value );
                                     tempVar.Close( );
                                     }
-                                //TODO LOGGINGResultsLabel.Content = $"File {fileName} download was successful";
+
                                 }
                             }
 
                         }
                     }
-
                 }
-            catch (Exception)
+            catch (Exception db)
                 {
-                //todo LOGGING!!! d[C#]b NiChi...!!!
+                SaveResults.Text = $"GepPlan Download Exception\n" +
+                                   $"Please Check Directory is valid\n" +
+                                   $"Please Ensure You have Write Access"
+                                   + db.Message;
                 }
             }
 
@@ -1672,8 +1217,8 @@ namespace PlanetConverter
 
                 var value = _currentIngestedPlanetFile;
                 var commavalue = value.Replace( "\t", "\r\n" );
-                string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                var totalWords = words.Length;
+                _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                var totalWords = _words.Length;
                 var cont1 = -181;
                 var cont2 = -1;
                 var cont3 = 181;
@@ -1684,12 +1229,12 @@ namespace PlanetConverter
                 var saveState4 = "";
                 var dateMeasured = Convert.ToDateTime( _date );
 
-                var start = "model_number\t" + _model + "\r\n" +
+                var start = "model_number\t" + _words[1] + "\r\n" +
                             "manufacturer\tAmphenol\r\n" +
                             "gain\t" + _maxGain + " dBd\r\n" +
-                            "h_beamwidth\t" + _horizontalBeamWidth + " degrees\r\n" +
-                            "v_beamwidth\t" + _verticalBeamWidth + " degrees\r\n" +
-                            "front_to_back\t" + _frontToBack + " dB\r\n" +
+                            "h_beamwidth\t" + _words[7] + " degrees\r\n" +
+                            "v_beamwidth\t" + _words[9] + " degrees\r\n" +
+                            "front_to_back\t" + _words[11] + " dB\r\n" +
                             "length\t" + _length + " meters\r\n" +
                             "lobe_tilt\t" + _lobeTilt + " degrees\r\n" +
                             "wind_area\t" + _windArea + " square meters\r\n" +
@@ -1702,27 +1247,41 @@ namespace PlanetConverter
 
                             "horizontal\r\n" +
                             "unequal unsymmetrical\r\n";
-                saveState1 = GranetHreturnPattern( cont1, words, 381, 739 );
-                saveState2 = GranetHreturnPattern( cont2, words, 21, 379 );
-                saveState3 = GranetVreturnPattern( cont3, words, 1103, totalWords - 1 );
-                saveState4 = GranetVreturnPattern( cont4, words, 743, 1101 );
+                saveState1 = GranetHreturnPattern( cont1, _words, 381, 739 );
+                saveState2 = GranetHreturnPattern( cont2, _words, 21, 379 );
+                saveState3 = GranetVreturnPattern( cont3, _words, 1103, totalWords - 1 );
+                saveState4 = GranetVreturnPattern( cont4, _words, 743, 1101 );
                 _granetConversionResults = start + saveState1 + saveState2 +
                                            "\r\nvertical\r\nunequal unsymmetrical\r\n" + saveState3 + saveState4;
                 }
-            catch (Exception)
+            catch (FormatException db)
                 {
-                //TODO LOGGING
+                SaveResults.Text = $"Granet Conversion Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
                 }
             }
         private string GranetHreturnPattern( int cont, string[] words, int startIndx, int fin )
             {
             var saveState = "";
-            for (var i = startIndx; i <= fin; i += 2)
+            try
                 {
-                cont++;
-                var newvalue = words[i];
-                var value = (Convert.ToDouble( newvalue ) * -1);
-                saveState += cont.ToString( ) + "\t" + value.ToString( "0.000" ) + "\r\n";
+                for (var i = startIndx; i <= fin; i += 2)
+                    {
+                    cont++;
+                    var newvalue = words[i];
+                    var value = (Convert.ToDouble( newvalue ) * -1);
+                    saveState += cont.ToString( ) + "\t" + value.ToString( "0.000" ) + "\r\n";
+                    }
+                //return saveState;
+                }
+            catch (FormatException db)
+                {
+                SaveResults.Text = $"Gran Horizontal Return Pattern Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
                 }
             return saveState;
             }
@@ -1730,12 +1289,22 @@ namespace PlanetConverter
             {
 
             var saveState = "";
-            for (var i = startIndx; i <= fin; i += 2)
+            try
                 {
-                cont--;
-                var newValue = words[i];
-                var value = (Convert.ToDouble( newValue )) * -1;
-                saveState += cont.ToString( ) + "\t" + value.ToString( "0.000" ) + "\r\n";
+                for (var i = startIndx; i <= fin; i += 2)
+                    {
+                    cont--;
+                    var newValue = words[i];
+                    var value = (Convert.ToDouble( newValue )) * -1;
+                    saveState += cont.ToString( ) + "\t" + value.ToString( "0.000" ) + "\r\n";
+                    }
+                }
+            catch (FormatException db)
+                {
+                SaveResults.Text = $"Gran Vertical Return Pattern Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
                 }
             return saveState;
             }
@@ -1771,7 +1340,7 @@ namespace PlanetConverter
                                 File.WriteAllText( $"{granetDir}\\{fileName}", value );
                                 tempVar.Close( );
                                 }
-                            // TODO LOGGING  ResultsLabel.Content = $"File {fileName} download was successful";
+
                             }
                         }
 
@@ -1793,7 +1362,7 @@ namespace PlanetConverter
                                     File.WriteAllText( $"{granetDir}\\{fileName}", value );
                                     tempVar.Close( );
                                     }
-                                //TODO LOGGINGResultsLabel.Content = $"File {fileName} download was successful";
+
                                 }
                             }
 
@@ -1801,9 +1370,12 @@ namespace PlanetConverter
                     }
 
                 }
-            catch (Exception)
+            catch (Exception db)
                 {
-                //todo LOGGING!!! d[C#]b NiChi...!!!
+                SaveResults.Text = $"Granet Download Exception\n" +
+                                   $"Please Check Directory is valid\n" +
+                                   $"Please Ensure You have Write Access"
+                                   + db.Message;
                 }
             }
 
@@ -1816,9 +1388,9 @@ namespace PlanetConverter
                     string[] separators = { "\r\n" };
                     var value = _currentIngestedPlanetFile;
                     var commavalue = value.Replace( "\t", "\r\n" );
-                    string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                    _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
                     var cont1 = -1;
-                    var totalWords = words.Length;
+                    var totalWords = _words.Length;
                     var saveState = "";
                     var saveState2 = "";
                     var saveState3 = "";
@@ -1827,7 +1399,7 @@ namespace PlanetConverter
                     var start = "ANTENNA-FILE \r\n" +
                                 "IA" + "\t" + "Hodiax v2.0 \r\n" +
                                 "IB" + "\t" + "ANTENNA-FILE \r\n" +
-                                "HA" + "\t" + words[1] + "\r\n" +
+                                "HA" + "\t" + _words[1] + "\r\n" +
                                 "HB \r\n" +
                                 "HC \r\n" +
                                 "HD \r\n" +
@@ -1843,7 +1415,7 @@ namespace PlanetConverter
                     for (var i = 21; i <= 739; i += 2)
                         {
                         cont1++;
-                        var newValue = words[i];
+                        var newValue = _words[i];
                         saveState += "HK" + "\t" + "H" + "\t" + cont1.ToString( ) + "\t" +
                                      (Convert.ToDouble( newValue ) * -1).ToString( ) + "\r\n";
                         }
@@ -1851,7 +1423,7 @@ namespace PlanetConverter
                     for (var i = 21; i <= 739; i += 2)
                         {
                         cont1++;
-                        var newValue = words[i];
+                        var newValue = _words[i];
                         saveState2 += "HK\tV\t" + cont1.ToString( ) + "\t" +
                                       (Convert.ToDouble( newValue ) * -1).ToString( ) + "\r\n";
                         }
@@ -1859,7 +1431,7 @@ namespace PlanetConverter
                     for (var i = 743; i <= totalWords; i += 2)
                         {
                         cont1++;
-                        var newValue = words[i];
+                        var newValue = _words[i];
                         saveState3 += "HK\t H\t" + cont1.ToString( ) + "\t" +
                                       (Convert.ToDouble( newValue ) * -1).ToString( ) + "\r\n";
                         }
@@ -1867,7 +1439,7 @@ namespace PlanetConverter
                     for (var i = 743; i <= totalWords; i += 2)
                         {
                         cont1++;
-                        var newValue = words[i];
+                        var newValue = _words[i];
                         saveState4 += "HK\t V\t" + cont1.ToString( ) + "\t" +
                                       (Convert.ToDouble( newValue ) * -1).ToString( ) + "\r\n";
                         }
@@ -1876,9 +1448,12 @@ namespace PlanetConverter
                     _hodiaxHorizontalConversionResults = start + "\r\n" + saveState3 + saveState4 + final;
                     _hodiaxVerticalConversionResults = start + "\r\n" + saveState + saveState2 + final;
                     }
-                catch (Exception)
+                catch (FormatException db)
                     {
-                    // TODO LOGGING .. and marry Lady Wax.... 
+                    SaveResults.Text = $"Hodiax Conversion Format Exception\n" +
+                                       $"Please check .pln is valid\n" +
+                                       $"Please check values in 'Textboxes' are correct\n"
+                                       + db.Message;
                     }
                 }
             }
@@ -1894,7 +1469,7 @@ namespace PlanetConverter
                     string[] separators = { "\r\n" };
                     var value = _hodiaxHorizontalConversionResults;
                     var commavalue = value.Replace( "\t", "\r\n" );
-                    string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                    _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
                     var hodiaxHorizDir = _appTargetDir + $"Hodiax_Horizontal";
 
@@ -1930,10 +1505,12 @@ namespace PlanetConverter
                             }
                         }
                     }
-                catch (Exception db)
+                catch (FormatException db)
                     {
-                    //TODO LOGGING NICHI NICHI NICHI
-                    MessageBox.Show( db.Message );
+                    SaveResults.Text = $"Hodiax Horizontal Return Pattern Format Exception\n" +
+                                       $"Please check .pln is valid\n" +
+                                       $"Please check values in 'Textboxes' are correct\n"
+                                       + db.Message;
                     }
                 }
             }
@@ -1984,9 +1561,12 @@ namespace PlanetConverter
                             }
                         }
                     }
-                catch (Exception)
+                catch (Exception db)
                     {
-                    //TODO LOGGING NICHI NICHI NICHI
+                    SaveResults.Text = $"Hodiax Download Exception\n" +
+                                       $"Please check .pln is valid\n" +
+                                       $"Please check values in 'Textboxes' are correct\n"
+                                       + db.Message;
                     }
                 }
             }
@@ -1995,12 +1575,24 @@ namespace PlanetConverter
             {
 
             var saveState = "";
-            for (var i = start; i <= fin; i += 2)
+
+            try
                 {
-                cont++;
-                var newvalue = words[i];
-                var value = (Convert.ToDouble( newvalue )) * -1;
-                saveState += cont.ToString( ) + "," + value.ToString( "0.0" ) + "\r\n";
+                for (var i = start; i <= fin; i += 2)
+                    {
+                    cont++;
+                    var newvalue = words[i];
+                    var value = (Convert.ToDouble( newvalue )) * -1;
+                    saveState += cont.ToString( ) + "," + value.ToString( "0.0" ) + "\r\n";
+                    }
+
+                }
+            catch (FormatException db)
+                {
+                SaveResults.Text = $"Hydra Horizontal Return Pattern Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
                 }
             return saveState;
             }
@@ -2008,17 +1600,28 @@ namespace PlanetConverter
             {
             var saveState = "";
             var strStack = new Stack<string>( );
-            for (var i = start; i < fin; i += 2)
-                {
-                var newValue = words[i];
-                var value = (Convert.ToDouble( newValue )) * -1;
-                strStack.Push( value.ToString( "0.0" ) );
 
-                }
-            foreach (var value in strStack)
+            try
                 {
-                cont++;
-                saveState += cont.ToString( ) + "," + value + "\r\n";
+                for (var i = start; i < fin; i += 2)
+                    {
+                    var newValue = words[i];
+                    var value = (Convert.ToDouble( newValue )) * -1;
+                    strStack.Push( value.ToString( "0.0" ) );
+
+                    }
+                foreach (var value in strStack)
+                    {
+                    cont++;
+                    saveState += cont.ToString( ) + "," + value + "\r\n";
+                    }
+                }
+            catch (FormatException db)
+                {
+                SaveResults.Text = $"Hydra Vertical Return Pattern Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
                 }
 
             return saveState;
@@ -2031,8 +1634,8 @@ namespace PlanetConverter
 
                 var value = _currentIngestedPlanetFile;
                 var commavalue = value.Replace( "\t", "\r\n" );
-                var words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                var totalWords = words.Length;
+                _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                var totalWords = _words.Length;
                 var cont1 = -181;
                 var cont2 = -1;
                 var cont3 = -181;
@@ -2046,7 +1649,7 @@ namespace PlanetConverter
                 var start = "REVNUM:,TIA/EIA IS-804-0\r\n" +
                             "REVDAT:,20010109\r\n" +
                             "ANTMAN:,Amphenol\r\n" +
-                            "MODNUM:," + words[1] + "\r\n" +
+                            "MODNUM:," + _words[1] + "\r\n" +
                             "FILNUM:," + dateMeasured.ToShortDateString( ) + "\r\n" +
                             "DESCR1:," + _description + "\r\n" +
                             "DTDATA:," + "20030821" + "\r\n" +
@@ -2056,8 +1659,8 @@ namespace PlanetConverter
                             "LWGAIN:," + _maxGain + "\r\n" +
                             "MDGAIN:," + _maxGain + "\r\n" +
                             "HGGAIN:," + _maxGain + "\r\n" +
-                            "AZWIDT:," + _horizontalBeamWidth + "\r\n" +
-                            "ELWIDT:," + _verticalBeamWidth + "\r\n" +
+                            "AZWIDT:," + _words[7] + "\r\n" +
+                            "ELWIDT:," + _words[9] + "\r\n" +
                             "CONTYP:," + "EDIN" + "\r\n" +
                             "ATVSWR:," + "1.5" + "\r\n" +
                             "ELTILT:,0\r\n" +
@@ -2068,7 +1671,7 @@ namespace PlanetConverter
                             "FIELD3:,\r\n" +
                             "PATTYP:," + "Typical" + "\r\n" +
                             "NOFREQ:,1\r\n" +
-                            "PATFRE:," + Frequency + "\r\n" +
+                            "PATFRE:," + _words[4] + "\r\n" +
                             "NUMCUT:," + "2" + "\r\n" +
                             "PATCUT:,H\r\n" +
                             "POLARI:," + _polarization + "\r\n" +
@@ -2079,16 +1682,19 @@ namespace PlanetConverter
                                   "POLARI:," + _polarization + "\r\n" +
                                   "NUPOIN:,360\r\n" +
                                   "FSTLST:,-180,179\r\n";
-                saveState1 = HydraHreturnPattern( cont1, words, 381, 739 );
-                saveState2 = HydraHreturnPattern( cont2, words, 21, 379 );
-                saveState3 = HydraVreturnPattern( cont3, words, 743, 1105 );
-                saveState4 = HydraVreturnPattern( cont4, words, 1105, totalWords );
+                saveState1 = HydraHreturnPattern( cont1, _words, 381, 739 );
+                saveState2 = HydraHreturnPattern( cont2, _words, 21, 379 );
+                saveState3 = HydraVreturnPattern( cont3, _words, 743, 1105 );
+                saveState4 = HydraVreturnPattern( cont4, _words, 1105, totalWords );
                 _hydraConversionResults = start + saveState1 + saveState2 + centerPoint + saveState3 + saveState4 +
                                           "ENDFIL,EOF";
                 }
-            catch (Exception)
+            catch (FormatException db)
                 {
-                // TODO LOGGING LOGGIN LOGGING
+                SaveResults.Text = $"Hydra Conversion Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
                 }
             }
         protected void DownloadHydra( )
@@ -2134,12 +1740,12 @@ namespace PlanetConverter
                             }
                         }
                     }
-
-
                 catch (Exception db)
                     {
-
-                    // todo LOGGING
+                    SaveResults.Text = $"Hydra Download Exception\n" +
+                                       $"Please Check Directory is valid\n" +
+                                       $"Please Ensure You have Write Access"
+                                       + db.Message;
                     }
                 }
 
@@ -2149,12 +1755,22 @@ namespace PlanetConverter
         public string LccHreturnPattern( int cont, string[] words, int start, int fin )
             {
             var saveState = "";
-            for (var i = start; i <= fin; i += 2)
+            try
                 {
-                cont++;
-                var newValue = words[i];
-                var value = Convert.ToDouble( _maxGain ) - Convert.ToDouble( newValue );
-                saveState += "AE\tH\t" + cont.ToString( "0.0" ) + "\t" + value.ToString( "0.0" ) + "\r\n";
+                for (var i = start; i <= fin; i += 2)
+                    {
+                    cont++;
+                    var newValue = words[i];
+                    var value = Convert.ToDouble( _maxGain ) - Convert.ToDouble( newValue );
+                    saveState += "AE\tH\t" + cont.ToString( "0.0" ) + "\t" + value.ToString( "0.0" ) + "\r\n";
+                    }
+                }
+            catch (FormatException db)
+                {
+                SaveResults.Text = $"LCC Horizontal Return Pattern Format Exception\n" +
+                                         $"Please check .pln is valid\n" +
+                                         $"Please check values in 'Textboxes' are correct\n"
+                                         + db.Message;
                 }
             return saveState;
             }
@@ -2162,12 +1778,23 @@ namespace PlanetConverter
             {
 
             var saveState = "";
-            for (var i = start; i <= fin; i += 2)
+
+            try
                 {
-                cont--;
-                var newValue = words[i];
-                var value = Convert.ToDouble( _maxGain ) - Convert.ToDouble( newValue );
-                saveState += "AE\tV\t" + cont.ToString( "0.0" ) + "\t" + value.ToString( "0.0" ) + "\r\n";
+                for (var i = start; i <= fin; i += 2)
+                    {
+                    cont--;
+                    var newValue = words[i];
+                    var value = Convert.ToDouble( _maxGain ) - Convert.ToDouble( newValue );
+                    saveState += "AE\tV\t" + cont.ToString( "0.0" ) + "\t" + value.ToString( "0.0" ) + "\r\n";
+                    }
+                }
+            catch (FormatException db)
+                {
+                SaveResults.Text = $"LCC Vertical Return Pattern Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
                 }
             return saveState;
             }
@@ -2179,40 +1806,43 @@ namespace PlanetConverter
 
                 var value = _currentIngestedPlanetFile;
                 var commavalue = value.Replace( "\t", "\r\n" );
-                string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                var totalWords = words.Length;
+                _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                var totalWords = _words.Length;
                 var cont1 = -1;
-                var cont2 = -1;
+                // var cont2 = -1;
                 var cont3 = 181;
                 var cont4 = 1;
                 var saveState1 = "";
                 var saveState3 = "";
                 var saveState4 = "";
-                var start = "AA  " + words[1] + "\r\n" +
+                var start = "AA  " + _words[1] + "\r\n" +
                             "AB\r\n" +
-                            "AC  S  " + _horizontalBeamWidth + " " + _maxGain + " 0\r\n" +
-                            "AD  " + _length + " 0 Amphenol " + words[1] + "\r\n";
+                            "AC  S  " + _words[7] + " " + _maxGain + " 0\r\n" +
+                            "AD  " + _length + " 0 Amphenol " + _words[1] + "\r\n";
                 var fin = "AF  " + _minFrequency + "-" + _minFrequency + " MHz\r\n" +
-                          "AG  50 Ohms\r\n" +
-                          "AH  <=1.5:1\r\n" +
-                          "AI  0\r\n" +
-                          "AJ  19\r\n" +
-                          "AK  500 W\r\n" +
-                          "AL  NE or EDIN\r\n" +
-                          "AM  " + _frontToBack + "\r\n" +
-                          "AN  29.1 lbs\r\n" +
-                          "AO\r\n" +
-                          "AP\r\n" +
-                          "AQ\r\n" +
-                          "AR";
-                saveState1 = LccHreturnPattern( cont1, words, 21, 739 );
-                saveState3 = LccVreturnPattern( cont3, words, 1103, totalWords - 1 );
-                saveState4 = LccVreturnPattern( cont4, words, 743, 1101 );
+                            "AG  50 Ohms\r\n" +
+                            "AH  <=1.5:1\r\n" +
+                            "AI  0\r\n" +
+                            "AJ  19\r\n" +
+                            "AK  500 W\r\n" +
+                            "AL  NE or EDIN\r\n" +
+                            "AM  " + _words[11] + "\r\n" +
+                            "AN  29.1 lbs\r\n" +
+                            "AO\r\n" +
+                            "AP\r\n" +
+                            "AQ\r\n" +
+                            "AR";
+                saveState1 = LccHreturnPattern( cont1, _words, 21, 739 );
+                saveState3 = LccVreturnPattern( cont3, _words, 1103, totalWords - 1 );
+                saveState4 = LccVreturnPattern( cont4, _words, 743, 1101 );
                 _lccConversionResults = start + saveState1 + saveState3 + saveState4 + fin;
                 }
-            catch (Exception)
+            catch (FormatException db)
                 {
-                // TODO TALK TO THE DIZZ... d[;)]b 
+                SaveResults.Text = $"LCC Conversion Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
                 }
             }
         protected void DownloadLccBatchTest( )
@@ -2246,7 +1876,6 @@ namespace PlanetConverter
                                 File.WriteAllText( $"{lccNetDir}\\{fileName}", value );
                                 tempVar.Close( );
                                 }
-                            // TODO LOGGING  ResultsLabel.Content = $"File {fileName} download was successful";
                             }
                         }
 
@@ -2266,14 +1895,16 @@ namespace PlanetConverter
                                     File.WriteAllText( $"{lccNetDir}\\{fileName}", value );
                                     tempVar.Close( );
                                     }
-                                //TODO LOGGINGResultsLabel.Content = $"File {fileName} download was successful";
                                 }
                             }
                         }
                     }
-                catch (Exception)
+                catch (Exception db)
                     {
-                    // TODO TEST REFACTOR   throw;
+                    SaveResults.Text = $"LCC Download Exception\n" +
+                                       $"Please Check Directory is valid\n" +
+                                       $"Please Ensure You have Write Access"
+                                       + db.Message;
                     }
                 }
             }
@@ -2282,27 +1913,37 @@ namespace PlanetConverter
             {
 
             var saveState = "";
-            Stack<string> strStack = new Stack<string>( );
+            var strStack = new Stack<string>( );
             var aryLst = new ArrayList( );
 
-            for (var i = start; i < fin; i += 2)
+            try
                 {
-                var newValue = words[i];
-                var value = (Convert.ToDouble( newValue )) * -1;
-                strStack.Push( value.ToString( "0.0" ) );
-
-                }
-            foreach (var value in strStack)
-                {
-                saveState += value + "\t";
-                aryLst.Add( saveState );
-                if (aryLst.Count == 10)
+                for (var i = start; i < fin; i += 2)
                     {
-                    saveState += "\r\n";
-                    aryLst.Clear( );
-                    }
-                }
+                    var newValue = words[i];
+                    var value = (Convert.ToDouble( newValue )) * -1;
+                    strStack.Push( value.ToString( "0.0" ) );
 
+                    }
+                foreach (var value in strStack)
+                    {
+                    saveState += value + "\t";
+                    aryLst.Add( saveState );
+                    if (aryLst.Count == 10)
+                        {
+                        saveState += "\r\n";
+                        aryLst.Clear( );
+                        }
+                    }
+
+                }
+            catch (FormatException db)
+                {
+                SaveResults.Text = $"NetPlan Horizontal Return Pattern Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
+                }
             return saveState;
             }
         private string NetPlanVreturnPattern( string[] words, int start, int fin )
@@ -2312,24 +1953,33 @@ namespace PlanetConverter
             var strStack = new Stack<string>( );
             var aryLst = new ArrayList( );
             aryLst.Add( "" );
-            for (var i = start; i < fin; i += 2)
+            try
                 {
-                var newValue = words[i];
-                var value = (Convert.ToDouble( newValue )) * -1;
-                strStack.Push( value.ToString( "0.0" ) );
-
-                }
-            foreach (var value in strStack)
-                {
-                saveState += value + "\t";
-                aryLst.Add( saveState );
-                if (aryLst.Count == 10)
+                for (var i = start; i < fin; i += 2)
                     {
-                    saveState += "\r\n";
-                    aryLst.Clear( );
+                    var newValue = words[i];
+                    var value = (Convert.ToDouble( newValue )) * -1;
+                    strStack.Push( value.ToString( "0.0" ) );
+
+                    }
+                foreach (var value in strStack)
+                    {
+                    saveState += value + "\t";
+                    aryLst.Add( saveState );
+                    if (aryLst.Count == 10)
+                        {
+                        saveState += "\r\n";
+                        aryLst.Clear( );
+                        }
                     }
                 }
-
+            catch (FormatException db)
+                {
+                SaveResults.Text = $"NetPlan Vertical Return Pattern Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
+                }
             return saveState;
             }
         private void ConvertToNetPlanBatch( )
@@ -2339,23 +1989,23 @@ namespace PlanetConverter
                 string[] separators = { "\r\n" };
                 var value = _currentIngestedPlanetFile;
                 var commavalue = value.Replace( "\t", "\r\n" );
-                string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                var totalWords = words.Length;
+                _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                var totalWords = _words.Length;
                 // var saveState1 = "";
                 var saveState = "";
                 var saveState2 = "";
                 var saveState3 = "";
 
-                var start = "Name = " + words[1] + "\r\n" +
+                var start = "Name = " + _words[1] + "\r\n" +
                             "Number of Points = 360\r\n" +
                             "Start Ang.= 0\r\n" +
-                            "Range = " + words[7] + "\r\n" +
+                            "Range = " + _words[7] + "\r\n" +
                             "Increment = 1\r\n" +
                             "Orientation = Horizontal";
-                var start2 = "Name = " + words[1] + "\r\n" +
+                var start2 = "Name = " + _words[1] + "\r\n" +
                              "Number of Points = 360\r\n" +
                              "Start Ang. = -180\r\n" +
-                             "Range = " + words[9] + "\r\n" +
+                             "Range = " + _words[9] + "\r\n" +
                              "Increment = 1\r\n" +
                              "Orientation = Vertical";
                 var aryLst = new ArrayList( );
@@ -2363,12 +2013,12 @@ namespace PlanetConverter
 
                 for (var i = 23; i <= 739; i += 2)
                     {
-                    var newvalue = words[i];
+                    var newvalue = _words[i];
                     strStack.Push( (Convert.ToDouble( newvalue ) * -1).ToString( "0.0" ) );
                     }
                 for (var i = 21; i <= 21; i += 2)
                     {
-                    var newvalue = words[i];
+                    var newvalue = _words[i];
                     strStack.Push( (Convert.ToDouble( newvalue ) * -1).ToString( "0.0" ) );
                     //aryLst.Add(saveState);
                     }
@@ -2382,11 +2032,9 @@ namespace PlanetConverter
                         aryLst.Clear( );
                         }
                     }
-
-
                 for (var i = 743; i <= totalWords - 2; i += 2)
                     {
-                    var newValue = words[i];
+                    var newValue = _words[i];
                     saveState2 += (Convert.ToDouble( newValue ) * -1).ToString( "0.0" ) + "\t";
                     aryLst.Add( saveState );
                     if (aryLst.Count == 10)
@@ -2395,68 +2043,80 @@ namespace PlanetConverter
                         aryLst.Clear( );
                         }
                     }
-                saveState2 = NetPlanHreturnPattern( words, 743, 1105 );
-                saveState3 = NetPlanVreturnPattern( words, 1105, totalWords );
+                saveState2 = NetPlanHreturnPattern( _words, 743, 1105 );
+                saveState3 = NetPlanVreturnPattern( _words, 1105, totalWords );
                 _netPlanVerticalConversionResults = start2 + "\r\n" + saveState2 + saveState3;
                 _netPlanHorizontalConversionResults = start + "\r\n" + saveState;
                 }
-            catch (Exception)
+            catch (FormatException db)
                 {
-                //TODO LOGGING LOGGING ... Stop thinking about the Windsor Mutchler... <3
+                SaveResults.Text = $"NetPlan Conversion Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
                 }
-
             }
         private void DownloadNetPlanBatch( )
             {
             if (_netPlanChecked)
                 {
                 var fileName = string.Empty;
-                fileName = _currentIngestedPlanetFileName;
-                var hFileName = "";
-                var vFileName = "";
-
-                var hValue = _netPlanHorizontalConversionResults;
-                var vValue = _netPlanVerticalConversionResults;
-
-                string[] hSeparators = { "\r\n" };
-                string[] vSeparators = { "\r\n" };
-
-                var vCommavalue = vValue.Replace( "\t", "\r\n" );
-                var hCommavalue = hValue.Replace( "\t", "\r\n" );
-
-                string[] vWords = vCommavalue.Split( vSeparators, StringSplitOptions.RemoveEmptyEntries );
-                string[] hWords = hCommavalue.Split( hSeparators, StringSplitOptions.RemoveEmptyEntries );
-
-                var netPlanHdir = _appTargetDir + $"NetPlan_Horizontal";
-                var netPlanVdir = _appTargetDir + $"NetPlan_Vertical";
-
-                if (!Directory.Exists( netPlanHdir )) Directory.CreateDirectory( netPlanHdir );
-                if (!Directory.Exists( netPlanVdir )) Directory.CreateDirectory( netPlanVdir );
-
-                hFileName =
-                    fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
-                    + ".h";
-
-                if (!File.Exists( netPlanHdir + hFileName ))
+                try
                     {
-                    using (var tempVar = File.Create( hFileName, 1024 ))
+                    fileName = _currentIngestedPlanetFileName;
+                    var hFileName = "";
+                    var vFileName = "";
+
+                    var hValue = _netPlanHorizontalConversionResults;
+                    var vValue = _netPlanVerticalConversionResults;
+
+                    string[] hSeparators = { "\r\n" };
+                    string[] vSeparators = { "\r\n" };
+
+                    var vCommavalue = vValue.Replace( "\t", "\r\n" );
+                    var hCommavalue = hValue.Replace( "\t", "\r\n" );
+
+                    string[] vWords = vCommavalue.Split( vSeparators, StringSplitOptions.RemoveEmptyEntries );
+                    string[] hWords = hCommavalue.Split( hSeparators, StringSplitOptions.RemoveEmptyEntries );
+
+                    var netPlanHdir = _appTargetDir + $"NetPlan_Horizontal";
+                    var netPlanVdir = _appTargetDir + $"NetPlan_Vertical";
+
+                    if (!Directory.Exists( netPlanHdir )) Directory.CreateDirectory( netPlanHdir );
+                    if (!Directory.Exists( netPlanVdir )) Directory.CreateDirectory( netPlanVdir );
+
+                    hFileName =
+                        fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
+                        + ".h";
+
+                    if (!File.Exists( netPlanHdir + hFileName ))
                         {
-                        File.WriteAllText( $"{netPlanHdir}\\{hFileName}", hValue );
-                        tempVar.Close( );
+                        using (var tempVar = File.Create( hFileName, 1024 ))
+                            {
+                            File.WriteAllText( $"{netPlanHdir}\\{hFileName}", hValue );
+                            tempVar.Close( );
+                            }
+                        }
+
+                    vFileName =
+                        fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
+                        + ".v";
+
+                    if (!File.Exists( netPlanVdir + vFileName ))
+                        {
+                        using (var tempVar = File.Create( vFileName, 1024 ))
+                            {
+                            File.WriteAllText( $"{netPlanVdir}\\{vFileName}", vValue );
+                            tempVar.Close( );
+                            }
                         }
                     }
-
-                vFileName =
-                    fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
-                    + ".v";
-
-                if (!File.Exists( netPlanVdir + vFileName ))
+                catch (Exception db)
                     {
-                    using (var tempVar = File.Create( vFileName, 1024 ))
-                        {
-                        File.WriteAllText( $"{netPlanVdir}\\{vFileName}", vValue );
-                        tempVar.Close( );
-                        }
+                    SaveResults.Text = $"NetPlan Download Exception\n" +
+                                       $"Please Check Directory is valid\n" +
+                                       $"Please Ensure You have Write Access"
+                                       + db.Message;
                     }
                 }
             }
@@ -2470,18 +2130,18 @@ namespace PlanetConverter
                     string[] separators = { "\r\n" };
                     var value = _currentIngestedPlanetFile;
                     var commavalue = value.Replace( "\t", "\r\n" );
-                    string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                    _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
                     var cont1 = -1;
                     var cont2 = -1;
-                    var totalWords = words.Length;
+                    var totalWords = _words.Length;
                     var saveState = "";
                     var saveState2 = "";
-                    var start = "NAME\t" + words[1] + "\r\n" +
-                                "FREQUENCY\t" + words[5] + "\r\n" +
-                                "BEAM_WIDTH\t" + words[7] + "\r\n" +
+                    var start = "NAME\t" + _words[1] + "\r\n" +
+                                "FREQUENCY\t" + _words[5] + "\r\n" +
+                                "BEAM_WIDTH\t" + _words[7] + "\r\n" +
                                 "GAIN\t" + _gain + "\r\n" +
-                                "TILT\t" + words[15] + "\r\n" +
-                                "CLASS\t" + _class + "\r\n" +
+                                "TILT\t" + _words[15] + "\r\n" +
+                                "CLASS\t" + _family + "\r\n" +
                                 "FREQUENCY_BAND" + "\t" + _lowerFrequency + " - " + _highFrequency + "\r\n" +
                                 "ELECTRICAL_TILT\t" + _electricalTilt + "\r\n" +
                                 "HORIZONTAL	360";
@@ -2489,22 +2149,25 @@ namespace PlanetConverter
                     for (var i = 21; i <= 740; i += 2)
                         {
                         cont1++;
-                        var newValue = words[i];
+                        var newValue = _words[i];
                         saveState += cont1.ToString( ) + "\t" + (Convert.ToDouble( newValue )).ToString( "0.0" ) + "\r\n";
                         }
                     for (var i = 743; i <= totalWords - 1; i += 2)
                         {
                         cont2++;
-                        var newvalue = words[i];
+                        var newvalue = _words[i];
                         saveState2 += cont2.ToString( ) + "\t" + (Convert.ToDouble( newvalue )).ToString( "0.0" ) + "\r\n";
                         }
 
                     _odysseyConversionResults = start + "\r\n" + saveState + "VERTICAL\t360\r\n" + saveState2;
 
                     }
-                catch (Exception)
+                catch (FormatException db)
                     {
-                    // TODO
+                    SaveResults.Text = $"Odyssey Conversion Format Exception\n" +
+                                       $"Please check .pln is valid\n" +
+                                       $"Please check values in 'Textboxes' are correct\n"
+                                       + db.Message;
                     }
                 }
             }
@@ -2512,40 +2175,59 @@ namespace PlanetConverter
             {
             var fileName = _currentIngestedPlanetFileName;
 
-            string[] separators = { "\r\n" };
-            var value = _odysseyConversionResults;
-            var commaValue = value.Replace( "\t", "\r\n" );
-            string[] words = commaValue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-
-            var odysseyDir = _appTargetDir + $"Odyssey";
-
-            if (!Directory.Exists( odysseyDir )) Directory.CreateDirectory( odysseyDir );
-            fileName =
-                fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
-                + ".txt";
-
-            if (!File.Exists( odysseyDir + fileName ))
+            try
                 {
-                using (var tempVar = File.Create( fileName, 1024 ))
-                    {
-                    File.WriteAllText( $"{odysseyDir}\\{fileName}", value );
-                    tempVar.Close( );
-                    }
-                }
+                string[] separators = { "\r\n" };
+                var value = _odysseyConversionResults;
+                var commaValue = value.Replace( "\t", "\r\n" );
+                string[] words = commaValue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
+                var odysseyDir = _appTargetDir + $"Odyssey";
+
+                if (!Directory.Exists( odysseyDir )) Directory.CreateDirectory( odysseyDir );
+                fileName =
+                    fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
+                    + ".txt";
+
+                if (!File.Exists( odysseyDir + fileName ))
+                    using (var tempVar = File.Create( fileName, 1024 ))
+                        {
+                        File.WriteAllText( $"{odysseyDir}\\{fileName}", value );
+                        tempVar.Close( );
+                        }
+                }
+            catch (Exception db)
+                {
+                SaveResults.Text = $"Odyssey Download Exception\n" +
+                                   $"Please Check Directory is valid\n" +
+                                   $"Please Ensure You have Write Access"
+                                   + db.Message;
+                }
             }
 
         public string PathLossReturnPattern( int cont, string[] words, int start, int fin )
             {
 
             var saveState = "";
-            for (var i = start; i <= fin; i += 2)
+
+            try
                 {
-                cont++;
-                var newValue = words[i];
-                var value = (Convert.ToDouble( newValue )) * -1;
-                saveState += cont.ToString( "0.0" ) + "," + value.ToString( "0.0" ) + "\r\n";
+                for (var i = start; i <= fin; i += 2)
+                    {
+                    cont++;
+                    var newValue = words[i];
+                    var value = (Convert.ToDouble( newValue )) * -1;
+                    saveState += cont.ToString( "0.0" ) + "," + value.ToString( "0.0" ) + "\r\n";
+                    }
                 }
+            catch (FormatException db)
+                {
+                SaveResults.Text = $"PathLoss Return Pattern Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
+                }
+
             return saveState;
             }
         protected void ConvertToPathLossBatch( )
@@ -2558,8 +2240,8 @@ namespace PlanetConverter
 
                     var value = _currentIngestedPlanetFile;
                     var commavalue = value.Replace( "\t", "\r\n" );
-                    string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                    var totalWords = words.Length;
+                    _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                    var totalWords = _words.Length;
                     var cont1 = -181;
                     var cont2 = -1;
                     var cont3 = -181;
@@ -2575,7 +2257,7 @@ namespace PlanetConverter
                                 "COMNT1:,\r\n" +
                                 "COMNT2:,\r\n" +
                                 "ANTMAN:,Amphenol\r\n" +
-                                "MODNUM:," + words[1] + "\r\n" +
+                                "MODNUM:," + _words[1] + "\r\n" +
                                 "DESCR1:," + _description + "\r\n" +
                                 "DTDATA:," + dateMeasured.ToString( "MM/dd/yyyy" ) + "\r\n" +
                                 "LOWFRQ:," + _lowFrequency + "\r\n" +
@@ -2584,8 +2266,8 @@ namespace PlanetConverter
                                 "LWGAIN:," + _maxGain + "\r\n" +
                                 "MDGAIN:," + _maxGain + "\r\n" +
                                 "HGGAIN:," + _maxGain + "\r\n" +
-                                "AZWIDT:," + words[7] + "\r\n" +
-                                "ELWIDT:," + words[9] + "\r\n" +
+                                "AZWIDT:," + _words[7] + "\r\n" +
+                                "ELWIDT:," + _words[9] + "\r\n" +
                                 "CONTYP:,EDIN\r\n" +
                                 "ATVSWR:" + _atvswr + "\r\n" +
                                 "FRTOBA:,32.0\r\n" +
@@ -2604,7 +2286,7 @@ namespace PlanetConverter
                                 "FIELD5:,\r\n" +
                                 "PATTYP:,Typical\r\n" +
                                 "NOFREQ:,1\r\n" +
-                                "PATFRE:," + Frequency + "\r\n" +
+                                "PATFRE:," + _words[4] + "\r\n" +
                                 "NUMCUT:,2\r\n" +
                                 "PATCUT:,AZ\r\n" +
                                 "POLARI:,SLR-SLL\r\n" +
@@ -2614,17 +2296,20 @@ namespace PlanetConverter
                                  "POLARI:,SLR-SLL\r\n" +
                                  "NUPOIN:,361\r\n" +
                                  "FSTLST:,-180,180\r\n";
-                    saveState1 = PathLossReturnPattern( cont1, words, 381, 739 );
-                    saveState2 = PathLossReturnPattern( cont2, words, 21, 381 );
-                    saveState3 = PathLossReturnPattern( cont3, words, 1103, totalWords );   //743-1105
-                    saveState4 = PathLossReturnPattern( cont4, words, 743, 1103 );    //1105-ta
+                    saveState1 = PathLossReturnPattern( cont1, _words, 381, 739 );
+                    saveState2 = PathLossReturnPattern( cont2, _words, 21, 381 );
+                    saveState3 = PathLossReturnPattern( cont3, _words, 1103, totalWords );   //743-1105
+                    saveState4 = PathLossReturnPattern( cont4, _words, 743, 1103 );    //1105-ta
                     _pathLossConversionResults = start + saveState1 + saveState2 + centerPoint + saveState3 + saveState4 + "ENDFIL,EOF";
 
                     // _pathLossTestVarSaveSate = saveState4; //CenterPoint V
                     }
-                catch (Exception)
+                catch (FormatException db)
                     {
-                    // TODO Get a Bike GO To School...
+                    SaveResults.Text = $"PathLoss Conversion Format Exception\n" +
+                                       $"Please check .pln is valid\n" +
+                                       $"Please check values in 'Textboxes' are correct\n"
+                                       + db.Message;
                     }
                 }
             }
@@ -2633,43 +2318,53 @@ namespace PlanetConverter
 
             var fileName = _currentIngestedPlanetFileName;
 
-            string[] separators = { "\r\n" };
-            var value = _pathLossConversionResults;
-            var commavalue = value.Replace( "\t", "\r\n" );
-            string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-
-            var pathLossDir = _appTargetDir + $"PathLoss";
-
-            if (!Directory.Exists( pathLossDir )) Directory.CreateDirectory( pathLossDir );
-            if (_pathLossTxtChecked)
+            try
                 {
-                fileName =
-                       fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
-                       + ".txt";
+                string[] separators = { "\r\n" };
+                var value = _pathLossConversionResults;
+                var commavalue = value.Replace( "\t", "\r\n" );
+                string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
 
-                if (!File.Exists( pathLossDir + fileName ))
+                var pathLossDir = _appTargetDir + $"PathLoss";
+
+                if (!Directory.Exists( pathLossDir )) Directory.CreateDirectory( pathLossDir );
+                if (_pathLossTxtChecked)
                     {
-                    using (var tempVar = File.Create( fileName, 1024 ))
+                    fileName =
+                           fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
+                           + ".txt";
+
+                    if (!File.Exists( pathLossDir + fileName ))
                         {
-                        File.WriteAllText( $"{pathLossDir}\\{fileName}", value );
-                        tempVar.Close( );
+                        using (var tempVar = File.Create( fileName, 1024 ))
+                            {
+                            File.WriteAllText( $"{pathLossDir}\\{fileName}", value );
+                            tempVar.Close( );
+                            }
+                        }
+                    }
+                if (_pathLossAdfChecked)
+                    {
+                    fileName =
+                        fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
+                        + ".adf";
+
+                    if (!File.Exists( pathLossDir + fileName ))
+                        {
+                        using (var tempVar = File.Create( fileName, 1024 ))
+                            {
+                            File.WriteAllText( $"{pathLossDir}\\{fileName}", value );
+                            tempVar.Close( );
+                            }
                         }
                     }
                 }
-            if (_pathLossAdfChecked)
+            catch (Exception db)
                 {
-                fileName =
-                    fileName.Substring( 0, fileName.LastIndexOf( ".", StringComparison.Ordinal ) )
-                    + ".adf";
-
-                if (!File.Exists( pathLossDir + fileName ))
-                    {
-                    using (var tempVar = File.Create( fileName, 1024 ))
-                        {
-                        File.WriteAllText( $"{pathLossDir}\\{fileName}", value );
-                        tempVar.Close( );
-                        }
-                    }
+                SaveResults.Text = $"PathLoss Download Exception\n" +
+                                   $"Please Check Directory is valid\n" +
+                                   $"Please Ensure You have Write Access"
+                                   + db.Message;
                 }
             }
 
@@ -2681,8 +2376,8 @@ namespace PlanetConverter
 
                 var value = _currentIngestedPlanetFile;
                 var commavalue = value.Replace( "\t", "\r\n" );
-                string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
-                var totalWords = words.Length;
+                _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                var totalWords = _words.Length;
                 var cont1 = -1;
                 var cont3 = -91;
                 var cont2 = -1;
@@ -2695,18 +2390,18 @@ namespace PlanetConverter
                 var saveState4 = "";
                 var saveState5 = "";
                 var start = "A|TECC|ANTESD|01.00|930501|APF|01|Amphenol_Amphenol| \r\n" +
-                            "|MFR|" + words[3] + "|" + "\r\n" +
-                            "|MODEL|" + words[1] + "|\r\n" +
-                            "|FILE|" + words[1] + ".apf|\r\n" +
+                            "|MFR|" + _words[3] + "|" + "\r\n" +
+                            "|MODEL|" + _words[1] + "|\r\n" +
+                            "|FILE|" + _words[1] + ".apf|\r\n" +
                             "|DESC|" + _description + "|\r\n" +
                             "|FCC ID|" + _fccId + "|\r\n" +
                             "|LENGTH|" + _length + "|\r\n" +
                             "|DATE|" + _date + "|\r\n" +
                             "|MFR ID|" + _mfrId + "|\r\n" +
-                            "|FREQ|" + words[5] + " MHz|\r\n" +
+                            "|FREQ|" + _words[5] + " MHz|\r\n" +
                             "|POLARIZATION|" + _polarization + "|\r\n" +
-                            "|Hbeam|" + _horizontalBeamWidth + "|\r\n" +
-                            "|Vbeam|" + _verticalBeamWidth + "|\r\n" +
+                            "|Hbeam|" + _words[7] + "|\r\n" +
+                            "|Vbeam|" + _words[9] + "|\r\n" +
                             "|MaxGain|" + _maxGain + " |\r\n" +
                             "|MinGain|" + _minGain + "|\r\n" +
                             "|HORIZ|0|360|";
@@ -2714,7 +2409,7 @@ namespace PlanetConverter
                 for (var i = 21; i <= 739; i += 2)
                     {
                     cont1++;
-                    var newvalue = words[i];
+                    var newvalue = _words[i];
                     var dblVal = Convert.ToDouble( _maxGain ) - Convert.ToDouble( newvalue );
                     saveState += "\t" + cont1.ToString( ) + "\t" + dblVal.ToString( "0.000" ) + "\t" + "\r\n";
                     }
@@ -2723,7 +2418,7 @@ namespace PlanetConverter
                 for (var i = 1283; i <= totalWords; i += 2)
                     {
                     cont3++;
-                    var newvalue = words[i];
+                    var newvalue = _words[i];
                     var dblVal = Convert.ToDouble( _maxGain ) - Convert.ToDouble( newvalue );
                     saveState3 += "\t" + cont3 + "\t" + dblVal.ToString( "0.000" ) + "\t" + "\r\n";
 
@@ -2731,7 +2426,7 @@ namespace PlanetConverter
                 for (var i = 743; i <= 923; i += 2)
                     {
                     cont2++;
-                    var newvalue = words[i];
+                    var newvalue = _words[i];
                     var dblVal = Convert.ToDouble( _maxGain ) - Convert.ToDouble( newvalue );
                     saveState2 += "\t" + cont2 + "\t" + dblVal.ToString( "0.000" ) + "\t" + "\r\n";
 
@@ -2740,7 +2435,7 @@ namespace PlanetConverter
                 Stack<string> strStack = new Stack<string>( );
                 for (var i = 1105; i <= 1283; i += 2)
                     {
-                    var newvalue = words[i];
+                    var newvalue = _words[i];
                     var dblVal = Convert.ToDouble( _maxGain ) - Convert.ToDouble( newvalue );
                     strStack.Push( dblVal.ToString( "0.000" ) );
 
@@ -2753,7 +2448,7 @@ namespace PlanetConverter
                 Stack<string> strStack2 = new Stack<string>( );
                 for (var i = 923; i < 1105; i += 2)
                     {
-                    var newvalue = words[i];
+                    var newvalue = _words[i];
                     var dblVal = (Convert.ToDouble( _maxGain ) - Convert.ToDouble( newvalue ));
                     strStack2.Push( dblVal.ToString( "0.000" ) );
 
@@ -2768,9 +2463,12 @@ namespace PlanetConverter
                 //txtGuardar.Text = saveState3 ;
                 _wizardConversionResults = _wizardConversionResults.Replace( "\t", "|" );
                 }
-            catch (Exception)
+            catch (FormatException db)
                 {
-                // TODO STOP THINKING...Enjoy the weekend REPROGRAM YOUR MIND BUILD \N _habbits
+                SaveResults.Text = $"Wizard Conversion Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
                 }
             }
         private void DownLoadWizardBatch( )
@@ -2820,9 +2518,12 @@ namespace PlanetConverter
                             }
                         }
                     }
-                catch (Exception)
+                catch (Exception db)
                     {
-                    // d[-!-]b TODO last one bro... Slaying it d[NiChi]b 
+                    SaveResults.Text = $"Wizard Download Exception\n" +
+                                       $"Please Check Directory is valid\n" +
+                                       $"Please Ensure You have Write Access"
+                                       + db.Message;
                     }
                 }
             }
@@ -2834,7 +2535,7 @@ namespace PlanetConverter
                 string[] separators = { "\n" };
                 var value = _currentIngestedPlanetFile;
                 var commavalue = value.Replace( "\t", "\n" );
-                string[] words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
+                _words = commavalue.Split( separators, StringSplitOptions.RemoveEmptyEntries );
                 var cont1 = -1;
                 // var count = 0;
                 var count3 = 0.0;
@@ -2844,7 +2545,7 @@ namespace PlanetConverter
                 for (int i = 21; i <= 740; i += 2)
                     {
                     cont1++;
-                    string newvalue = words[i];
+                    string newvalue = _words[i];
                     double valor = Math.Round( (Convert.ToDouble( _maxGain ) - Convert.ToDouble( newvalue )), 2 );
                     count3 += 0.1;
                     _atollConversionResults = saveState += cont1.ToString( ) + " " + Math.Round( count3, 2 ) + " ";
@@ -2855,32 +2556,28 @@ namespace PlanetConverter
                 int.TryParse( _trimmedTiltVal, out k );
                 var d = new AtollPillaLst( )
                     {
-                    Name = _trimmedFileName, //CurrentFileName
-                    Name2 = _model,
+                    Name = _words[1],
+                    Name2 = _words[1],
                     Gain = _maxGain,
-                    Manuf = _manufacturer,
+                    Manuf = _words[3],
                     Comm = _comments,
                     Patt = "2 0 0 360 " + saveState,
                     PET = k.ToString( ),//<-------
                     Beam = _beamwidth,//<-------
                     Fmin = _minFrequency,//<-------
                     Fmax = _maxFrequency,//<-------
-                    Freq = _frequency, //Frequency
-                    VWidth = _verticalBeamWidth,
-                    FTB = _frontToBack,
+                    Freq = _words[5], //Frequency
+                    VWidth = _words[9],
+                    FTB = _words[11],
                     Tilt = _trimmedTiltVal,
-                    Hwidth = _horizontalBeamWidth,
+                    Hwidth = _words[7],
                     Fam = _family,//<-------
                     Dim = _dimensions,//<-------
                     Weight = _weight,//<-------
                     PPD = dateMeasured.ToString( "yyyy_mm_dd" )//<-------
 
                     };
-
-
                 _datos.Add( d );
-                // count += 1;
-
                 //var rowCt = 2; // todo var _fileEntries[] 
                 NsExcel.ApplicationClass toExcelApp = new NsExcel.ApplicationClass( );
 
@@ -2894,70 +2591,65 @@ namespace PlanetConverter
                         _workBook = toExcelApp.Workbooks.Open( workBookPath, 0, false, 5, "", "", false,
                            NsExcel.XlPlatform.xlWindows, "", true, false, 0, true, false, false );
                         var sheetOnOpen = (NsExcel.Worksheet)_workBook.Sheets[1];
-                        _exSheetPostOpen = sheetOnOpen;
+                        _eXlBkOpen = sheetOnOpen;
                         }
 
                     #region Set Column Names
                     if (_rowCt <= 2)
                         {
-                        _exSheetPostOpen.Cells[1, 1] = $"Name";
-                        _exSheetPostOpen.Cells[1, 2] = $"Model";
-                        _exSheetPostOpen.Cells[1, 3] = $"Gain (dbi)";
-                        _exSheetPostOpen.Cells[1, 4] = $"Manufacturer";
-                        _exSheetPostOpen.Cells[1, 5] = $"Comments";
-                        _exSheetPostOpen.Cells[1, 6] = $"Pattern";
-                        _exSheetPostOpen.Cells[1, 7] = $"Pattern Electrical Tilt(?) ";
-                        _exSheetPostOpen.Cells[1, 8] = $"BeamWidth";
-                        _exSheetPostOpen.Cells[1, 9] = $"FMin";
-                        _exSheetPostOpen.Cells[1, 10] = $"FMax";
-                        _exSheetPostOpen.Cells[1, 11] = $"Frequency";
-                        _exSheetPostOpen.Cells[1, 12] = $"VWidth";
-                        _exSheetPostOpen.Cells[1, 13] = $"Front To Back";
-                        _exSheetPostOpen.Cells[1, 14] = $"Tilt";
-                        _exSheetPostOpen.Cells[1, 15] = $"H Width";
-                        _exSheetPostOpen.Cells[1, 16] = $"Family";
-                        _exSheetPostOpen.Cells[1, 17] = $"Dimensions HxWxD (inches)";
-                        _exSheetPostOpen.Cells[1, 18] = $"Weight (lbs)";
-                        _exSheetPostOpen.Cells[1, 19] = $"Pattern Posting Date";
+                        _eXlBkOpen.Cells[1, 1] = $"Name";
+                        _eXlBkOpen.Cells[1, 2] = $"Model";
+                        _eXlBkOpen.Cells[1, 3] = $"Gain (dbi)";
+                        _eXlBkOpen.Cells[1, 4] = $"Manufacturer";
+                        _eXlBkOpen.Cells[1, 5] = $"Comments";
+                        _eXlBkOpen.Cells[1, 6] = $"Pattern";
+                        _eXlBkOpen.Cells[1, 7] = $"Pattern Electrical Tilt(?) ";
+                        _eXlBkOpen.Cells[1, 8] = $"BeamWidth";
+                        _eXlBkOpen.Cells[1, 9] = $"FMin";
+                        _eXlBkOpen.Cells[1, 10] = $"FMax";
+                        _eXlBkOpen.Cells[1, 11] = $"Frequency";
+                        _eXlBkOpen.Cells[1, 12] = $"VWidth";
+                        _eXlBkOpen.Cells[1, 13] = $"Front To Back";
+                        _eXlBkOpen.Cells[1, 14] = $"Tilt";
+                        _eXlBkOpen.Cells[1, 15] = $"H Width";
+                        _eXlBkOpen.Cells[1, 16] = $"Family";
+                        _eXlBkOpen.Cells[1, 17] = $"Dimensions HxWxD (inches)";
+                        _eXlBkOpen.Cells[1, 18] = $"Weight (lbs)";
+                        _eXlBkOpen.Cells[1, 19] = $"Pattern Posting Date";
                         _isAtollExNew = false;
                         }
                     #endregion
-
-
-
-
                     }
-
                 #region Insert current datOs to current exRow
 
                 if (_datOsCt <= _fileEntries.Length)
                     {
-                    _exSheetPostOpen.Cells[_rowCt, 1] = _datos[_datOsCt].Name;
-                    _exSheetPostOpen.Cells[_rowCt, 2] = _datos[_datOsCt].Name2; //trim file name C0000G
-                    _exSheetPostOpen.Cells[_rowCt, 3] = _datos[_datOsCt].Gain;
-                    _exSheetPostOpen.Cells[_rowCt, 4] = _datos[_datOsCt].Manuf;
-                    _exSheetPostOpen.Cells[_rowCt, 5] = _datos[_datOsCt].Comm;
-                    _exSheetPostOpen.Cells[_rowCt, 6] = _datos[_datOsCt].Patt;
-                    _exSheetPostOpen.Cells[_rowCt, 7] = _datos[_datOsCt].PET;
-                    _exSheetPostOpen.Cells[_rowCt, 8] = _datos[_datOsCt].Beam;
-                    _exSheetPostOpen.Cells[_rowCt, 9] = _datos[_datOsCt].Fmin;
-                    _exSheetPostOpen.Cells[_rowCt, 10] = _datos[_datOsCt].Fmax;
-                    _exSheetPostOpen.Cells[_rowCt, 11] = _datos[_datOsCt].Freq;
-                    _exSheetPostOpen.Cells[_rowCt, 12] = _datos[_datOsCt].VWidth;
-                    _exSheetPostOpen.Cells[_rowCt, 13] = _datos[_datOsCt].FTB;
-                    _exSheetPostOpen.Cells[_rowCt, 14] = _datos[_datOsCt].Tilt;
-                    _exSheetPostOpen.Cells[_rowCt, 15] = _datos[_datOsCt].Hwidth;
-                    _exSheetPostOpen.Cells[_rowCt, 16] = _datos[_datOsCt].Fam;
-                    _exSheetPostOpen.Cells[_rowCt, 17] = _datos[_datOsCt].Dim;
-                    _exSheetPostOpen.Cells[_rowCt, 18] = _datos[_datOsCt].Weight;
-                    _exSheetPostOpen.Cells[_rowCt, 19] = _datos[_datOsCt].PPD;
+                    _eXlBkOpen.Cells[_rowCt, 1] = _datos[_datOsCt].Name;
+                    _eXlBkOpen.Cells[_rowCt, 2] = _datos[_datOsCt].Name2;
+                    _eXlBkOpen.Cells[_rowCt, 3] = _datos[_datOsCt].Gain;
+                    _eXlBkOpen.Cells[_rowCt, 4] = _datos[_datOsCt].Manuf;
+                    _eXlBkOpen.Cells[_rowCt, 5] = _datos[_datOsCt].Comm;
+                    _eXlBkOpen.Cells[_rowCt, 6] = _datos[_datOsCt].Patt;
+                    _eXlBkOpen.Cells[_rowCt, 7] = _datos[_datOsCt].PET;
+                    _eXlBkOpen.Cells[_rowCt, 8] = _datos[_datOsCt].Beam;
+                    _eXlBkOpen.Cells[_rowCt, 9] = _datos[_datOsCt].Fmin;
+                    _eXlBkOpen.Cells[_rowCt, 10] = _datos[_datOsCt].Fmax;
+                    _eXlBkOpen.Cells[_rowCt, 11] = _datos[_datOsCt].Freq;
+                    _eXlBkOpen.Cells[_rowCt, 12] = _datos[_datOsCt].VWidth;
+                    _eXlBkOpen.Cells[_rowCt, 13] = _datos[_datOsCt].FTB;
+                    _eXlBkOpen.Cells[_rowCt, 14] = _datos[_datOsCt].Tilt;
+                    _eXlBkOpen.Cells[_rowCt, 15] = _datos[_datOsCt].Hwidth;
+                    _eXlBkOpen.Cells[_rowCt, 16] = _datos[_datOsCt].Fam;
+                    _eXlBkOpen.Cells[_rowCt, 17] = _datos[_datOsCt].Dim;
+                    _eXlBkOpen.Cells[_rowCt, 18] = _datos[_datOsCt].Weight;
+                    _eXlBkOpen.Cells[_rowCt, 19] = _datos[_datOsCt].PPD;
                     _rowCt++;
                     ++_datOsCt;
                     if (_datOsCt == _fileEntries.Length)
                         {
                         var sT = DateTime.Now.ToShortDateString( );
                         var time = sT.Replace( '/', '_' );
-                        var savePath = $"{_appTargetDir}Atoll_{_model}_{time}.xlsx";
+                        var savePath = $"{_appTargetDir}Atoll_{FamilyTextBox.Text}_{time}.xlsx";
                         _workBook.SaveAs( savePath );
                         toExcelApp.Workbooks.Close( );
                         toExcelApp.Quit( );
@@ -2967,16 +2659,16 @@ namespace PlanetConverter
                 #endregion
 
                 }
-            catch (Exception db)
+            catch (FormatException db)
                 {
-                SaveResults.Text = db.Message;
+                SaveResults.Text = $"Atoll Conversion Format Exception\n" +
+                                   $"Please check .pln is valid\n" +
+                                   $"Please check values in 'Textboxes' are correct\n"
+                                   + db.Message;
                 }
             }
-
         #endregion
-
-
-
+        
         private void SelectAllFormatsCheckBox_OnChecked( object sender, RoutedEventArgs e )
             {
 

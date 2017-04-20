@@ -7,7 +7,7 @@ namespace PlanetConverter.Models
     public class ClsFiles : MainWindow
         {
 
-        private string _airComConversionResults;
+       // private string _airComConversionResults;
         private string _savePath = $"C:\\Code\\PRJ-2_PlanetConvert\\TestingFolder";
         private string _outputFilePath = $"C:\\Code\\PRJ-2_PlanetConvert\\Converted Downloads\\";
 

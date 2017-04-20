@@ -13,100 +13,101 @@
     Margin="0,0,0,0"
     mc:Ignorable="d">
 
-    <!--#region Header -->
-    <Grid x:Name="MainGrid" 
-        Margin=".5,0,.5,0" >
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30" />
-            <ColumnDefinition Width="95*" />
-            <ColumnDefinition Width="99*"/>
-            <ColumnDefinition Width="15*"/>
-            <ColumnDefinition Width="412" />
-            <ColumnDefinition Width="30*" />
-            <ColumnDefinition Width="337*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="105" />
-            <RowDefinition Height="95*" />
-            <RowDefinition Height="475*"/>
-            <RowDefinition Height="66*"/>
-        </Grid.RowDefinitions>
+     <!--#region Header -->
+  <Grid x:Name="MainGrid"
+      Margin=".5,0,.5,0" >
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="30" />
+      <ColumnDefinition Width="95*" />
+      <ColumnDefinition Width="99*"/>
+      <ColumnDefinition Width="15*"/>
+      <ColumnDefinition Width="412" />
+      <ColumnDefinition Width="30*" />
+      <ColumnDefinition Width="337*"/>
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="105" />
+      <RowDefinition Height="95*" />
+      <RowDefinition Height="475*"/>
+      <RowDefinition Height="66*"/>
+    </Grid.RowDefinitions>
 
-        <Grid
-            Margin="0,0,1.143,5.143"
-            Grid.ColumnSpan="7"
-            Row="0">
-            <Grid.Background>
-                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Offset="0" Color="#FF383838" />
-                    <GradientStop Offset="0.869" Color="Black" />
-                    <GradientStop Offset="0.879" Color="#FFC5C5C5" />
-                    <GradientStop Offset="1" />
-                    <GradientStop Offset="0.892" Color="#BC5F5F5F" />
-                </LinearGradientBrush>
-            </Grid.Background>
-            <Image
-                Width="190"
-                Height="57"
-                MaxHeight="90"
-                Margin="10,10,0,30"
+    <Grid
+        Margin="0,0,1.143,5.143"
+        Grid.ColumnSpan="7"
+        Row="0">
+      <Grid.Background>
+        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+          <GradientStop Offset="0" Color="#FF383838" />
+          <GradientStop Offset="0.869" Color="Black" />
+          <GradientStop Offset="0.879" Color="#FFC5C5C5" />
+          <GradientStop Offset="1" />
+          <GradientStop Offset="0.892" Color="#BC5F5F5F" />
+        </LinearGradientBrush>
+      </Grid.Background>
+      <Image
+          Width="190"
+          Height="57"
+          MaxHeight="90"
+          Margin="10,10,0,30"
+          HorizontalAlignment="Left"
+          VerticalAlignment="Center"
+          Source="Assets/Amphenol-Antenna-Solutions-Logo.gif" />
+    </Grid>
+    <!--#endregion -->
+
+    <!--#region Checkbox Stack Panel -->
+    <StackPanel x:Name="ConversionCheckBoxes"
+                Grid.Column="1"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Source="Assets/Amphenol-Antenna-Solutions-Logo.gif" />
-        </Grid>
-        <!--#endregion -->
+                Height="411"
+                Margin="12.286,24,0,0"
+                Grid.Row="2"
+                VerticalAlignment="Top"
+                Width="100" Grid.ColumnSpan="2">
+      <CheckBox IsThreeState="False" x:Name="SelectAllFormatsCheckBox" Content="Select All" Foreground="Black" IsChecked="False" Checked="SelectAllFormatsCheckBox_OnChecked" Unchecked="SelectAllFormatsCheckBox_OnUnchecked"/>
 
-        <!--#region Checkbox Stack Panel -->
-        <StackPanel x:Name="ConversionCheckBoxes"
-                    Grid.Column="1" 
-                    HorizontalAlignment="Left" 
-                    Height="411" 
-                    Margin="12.286,24,0,0" 
-                    Grid.Row="2" 
-                    VerticalAlignment="Top" 
-                    Width="100" Grid.ColumnSpan="2">
-            <CheckBox IsThreeState="False" x:Name="SelectAllFormatsCheckBox" Content="Select All" Foreground="Black" IsChecked="False" Checked="SelectAllFormatsCheckBox_OnChecked" Unchecked="SelectAllFormatsCheckBox_OnUnchecked"/>
+      <Separator Height="05"></Separator>
+      <CheckBox x:Name="AircomCheckBox" Content="AIRCOM" Foreground="Black" IsChecked="False" />
+      <Separator Height="05"></Separator>
+      <CheckBox x:Name="AtollCheckBox" Content="ATOLL" Foreground="Black" IsChecked="False" />
+      <Separator Height="10"></Separator>
+      <CheckBox x:Name="Ce4CheckBox" Content="CE4" Foreground="Black" IsChecked="False" />
+      <Separator Height="10"></Separator>
+      <CheckBox x:Name="CelCadCheckBox" Content="CELCAD" Foreground="Black" IsChecked="False"/>
+      <Separator Height="10"></Separator>
+      <CheckBox x:Name="CelPlanCheckBox" Content="CELPLAN" Foreground="Black" IsChecked="False" />
+      <Separator Height="10"></Separator>
+      <CheckBox x:Name="GeoplanCheckBox" Content="GEOPLAN" Foreground="Black" IsChecked="False" />
+      <Separator Height="10"></Separator>
+      <CheckBox x:Name="GranetCheckBox" Content="GRANET" Foreground="Black" IsChecked="False" />
+      <Separator Height="10"></Separator>
+      <CheckBox x:Name="HodiaxCheckBox" Content="HODIAX" Foreground="Black" IsChecked="False" />
+      <Separator Height="10"></Separator>
+      <CheckBox x:Name="HydraCheckBox" Content="HYDRA" Foreground="Black" IsChecked="False" />
+      <Separator Height="10"></Separator>
+      <CheckBox x:Name="LccNetCheckBox" Content="LCC-NET" Foreground="Black" IsChecked="False" />
+      <Separator Height="10"></Separator>
+      <CheckBox x:Name="NetplanCheckBox" Content="NETPLAN" Foreground="Black" IsChecked="False" />
+      <Separator Height="10"></Separator>
+      <CheckBox x:Name="OdesseyCheckBox" Content="ODESSEY" Foreground="Black" IsChecked="False" />
+      <Separator Height="10"></Separator>
+      <CheckBox x:Name="PathLossCheckBox" Content="PATHLOSS" Foreground="Black" IsChecked="False"/>
+      <Separator Height="10"></Separator>
+      <CheckBox x:Name="WizardCheckBox" Content="WIZARD" Foreground="Black" IsChecked="False" />
+    </StackPanel>
+    <!--#endregion -->
 
-            <Separator Height="05"></Separator>
-            <CheckBox x:Name="AircomCheckBox" Content="AIRCOM" Foreground="Black" IsChecked="False" />
-            <Separator Height="05"></Separator>
-            <CheckBox x:Name="AtollCheckBox" Content="ATOLL" Foreground="Black" IsChecked="False" />
-            <Separator Height="10"></Separator>
-            <CheckBox x:Name="Ce4CheckBox" Content="CE4" Foreground="Black" IsChecked="False" />
-            <Separator Height="10"></Separator>
-            <CheckBox x:Name="CelCadCheckBox" Content="CELCAD" Foreground="Black" IsChecked="False"/>
-            <Separator Height="10"></Separator>
-            <CheckBox x:Name="CelPlanCheckBox" Content="CELPLAN" Foreground="Black" IsChecked="False" />
-            <Separator Height="10"></Separator>
-            <CheckBox x:Name="GeoplanCheckBox" Content="GEOPLAN" Foreground="Black" IsChecked="False" />
-            <Separator Height="10"></Separator>
-            <CheckBox x:Name="GranetCheckBox" Content="GRANET" Foreground="Black" IsChecked="False" />
-            <Separator Height="10"></Separator>
-            <CheckBox x:Name="HodiaxCheckBox" Content="HODIAX" Foreground="Black" IsChecked="False" />
-            <Separator Height="10"></Separator>
-            <CheckBox x:Name="HydraCheckBox" Content="HYDRA" Foreground="Black" IsChecked="False" />
-            <Separator Height="10"></Separator>
-            <CheckBox x:Name="LccNetCheckBox" Content="LCC-NET" Foreground="Black" IsChecked="False" />
-            <Separator Height="10"></Separator>
-            <CheckBox x:Name="NetplanCheckBox" Content="NETPLAN" Foreground="Black" IsChecked="False" />
-            <Separator Height="10"></Separator>
-            <CheckBox x:Name="OdesseyCheckBox" Content="ODESSEY" Foreground="Black" IsChecked="False" />
-            <Separator Height="10"></Separator>
-            <CheckBox x:Name="PathLossCheckBox" Content="PATHLOSS" Foreground="Black" IsChecked="False"/>
-            <Separator Height="10"></Separator>
-            <CheckBox x:Name="WizardCheckBox" Content="WIZARD" Foreground="Black" IsChecked="False" />
-        </StackPanel>
-        <!--#endregion -->
-
-        <!-- #region Input Fields-->
-        <ScrollViewer Grid.Column="4" Grid.Row="2" CanContentScroll="True" Margin="4.714,0,9.286,0.714">
-            <StackPanel x:Name="FormVariablesOne" Grid.Column="2"  HorizontalAlignment="Left" Height="459" 
-                    Grid.Row="2" VerticalAlignment="Top" Width="360" Grid.RowSpan="2">
-                <StackPanel Orientation="Horizontal">
+    <!--Input Fields-->
+    <ScrollViewer Grid.Column="4" Grid.Row="2" CanContentScroll="True" Margin="4.714,0,9.286,0.714">
+      <StackPanel x:Name="FormVariablesOne" Grid.Column="2"  HorizontalAlignment="Left" Height="459"
+              Grid.Row="2" VerticalAlignment="Top" Width="360" Grid.RowSpan="2">
+        <!--todo objective !REVERT-->
+        <!--<StackPanel Orientation="Horizontal">
                     <TextBlock Text="Antenna Type   :  " Foreground="Black"></TextBlock>
                     <TextBox x:Name="AntennaTypeTextBox" Height="23" TextWrapping="Wrap" Text="" Width="250"/>
                 </StackPanel>
-                <Separator Height="10"></Separator>
+                <Separator Height="10" ></Separator>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="ATVSWR  :  " Foreground="Black"></TextBlock>
                     <TextBox x:Name="ATVSWRTextBox" Height="23" TextWrapping="Wrap" Text="" Width="278"/>
@@ -315,156 +316,362 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Wind Area  :         " Foreground="Black"></TextBlock>
                     <TextBox x:Name="WindAreaTextBox" Height="23" TextWrapping="Wrap" Text="" Width="246"/>
-                </StackPanel>
-            </StackPanel>
-        </ScrollViewer>
-        <!-- #endregion -->
-
-        <!--#region Display Out-->
-        <Grid x:Name="DisplayGrid" Grid.Column="6" Grid.Row="2" Margin="7.429,0,25.143,0.714">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <ScrollViewer CanContentScroll="True" Margin="0,0,0,0">
-                <TextBox x:Name="ReadResults" 
-                         VerticalContentAlignment="Stretch"
-                         HorizontalAlignment="Stretch" 
-                         TextWrapping="Wrap" 
-                         Text="" 
-                         VerticalAlignment="Top" Height="Auto"
-                         Width="Auto" />
-            </ScrollViewer>
-            <Separator Height="1" Grid.Row="1"/>
-            <ScrollViewer CanContentScroll="True" Grid.Row="2" Margin="0,0,0,0">
-                <TextBox x:Name="SaveResults" 
-                     VerticalContentAlignment="Stretch"
-                     HorizontalAlignment="Stretch" 
-                     TextWrapping="Wrap" 
-                     Text="" 
-                     VerticalAlignment="Top" Height="Auto"
-                      Width="Auto" />
-            </ScrollViewer>
-            <Separator Height="1" Grid.Row="1"/>
-
-            <!--</StackPanel>-->
-        </Grid>
-        <!--#endregion -->
-
-        <!--#region Nav Buttons -->
-        <StackPanel Orientation="Horizontal" Grid.ColumnSpan="4" Margin="3.286,105,6.286,55" Grid.RowSpan="2" Grid.Column="1">
-            <Button x:Name="BrowseDirSrcButton"
-                  Content="Source Dir" 
-                  Margin="5"
-                  Height="25"
-                  Width="65" 
-                  Click="Src_Dir_Button_Click"/>
-            <Button x:Name="ConvertedFileDestButton"
-                  Content="Target Dir" 
-                  Margin="5"
-                  Height="25"
-                  Width="65"
-                  Background="LightGreen" 
-                  Click="Target_Dir_Button_Click"/>
-            <Button x:Name="DownloadFileButton"  
-                  Content="Download" 
-                  Margin="5"
-                  Height="25"
-                  Width="65" 
-                  Background="#1589FF"
-                  Click="Download_Converted_Files"/>
-            <Button x:Name="SingleFileButton"  
-                    Content="Select File" 
-                    Margin="5"
-                    Height="25"
-                    Width="65" 
-                    Background="White"
-                    Click="Single_File_Button_Click"/>
-            <Button x:Name="PopulateButton"  
-                    Content="Populate" 
-                    Margin="5"
-                    Height="25"
-                    Width="65" 
-                    Background="White"
-                    Click="PopulateButton_Click"/>
+                </StackPanel>-->
+      
+        <!--todo AIRCOM -->
+          <StackPanel Orientation="Horizontal">
+              <TextBlock Text="Comments  : " Foreground="Black"></TextBlock>
+              <TextBox x:Name="CommentsTextBox" Height="23" TextWrapping="Wrap" Text="" Width="270"/>
+          </StackPanel>
+        <Label>AIRCOM: -Frequency -Hwidth -Vwidth -FrontToBack #src=.pln</Label>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Max Gain  :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="MaxGainTextBox" Height="23" TextWrapping="Wrap" Text="" Width="252"/>
         </StackPanel>
-        <!--#endregion-->
+        <Separator Height="5"></Separator>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Polarization  " Foreground="Black"></TextBlock>
+          <TextBox x:Name="PolarizationTextBox" Height="23" TextWrapping="Wrap" Text="" Width="272"/>
+        </StackPanel>
+        <Separator Height="5"></Separator>
+        <Separator Height="15"></Separator>
+        <Label>ATOLL: -MaxGain -PatPostDate #Fam=Class=AntType</Label>
+        <!--todo ATOLL -->
+          <StackPanel Orientation="Horizontal">
+              <TextBlock Text="Beamwidth     :  " Foreground="Black"></TextBlock>
+              <TextBox x:Name="BeamwidthTextBox" Height="23" TextWrapping="Wrap" Text="" Width="255"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+              <TextBlock Text="Date :  " Foreground="Black"></TextBlock>
+              <TextBox x:Name="DateTextBox" Height="23" TextWrapping="Wrap" Text="" Width="303"/>
+          </StackPanel>
+          <Separator Height="5"></Separator>
+          <StackPanel Orientation="Horizontal">
+              <TextBlock Text="Dimensions  :  " Foreground="Black"></TextBlock>
+              <TextBox x:Name="DimensionsTextBox" Height="23" TextWrapping="Wrap" Text="" Width="262"/>
+          </StackPanel>
+          <Separator Height="5"></Separator>
+          <StackPanel Orientation="Horizontal">
+              <TextBlock Text="Family : " Foreground="Black"></TextBlock>
+              <TextBox x:Name="FamilyTextBox" Height="23" TextWrapping="Wrap" Text="" Width="297"/>
+          </StackPanel>
+          <Separator Height="5"></Separator>
+          <StackPanel Orientation="Horizontal">
+              <TextBlock Text="Max Frequency  :         " Foreground="Black"></TextBlock>
+              <TextBox x:Name="MaxFrequencyTextBox" Height="23" TextWrapping="Wrap" Text="" Width="221"/>
+          </StackPanel>
+          <Separator Height="5"></Separator>
+          <StackPanel Orientation="Horizontal">
+              <TextBlock Text="Min Frequency   :         " Foreground="Black"></TextBlock>
+              <TextBox x:Name="MinFrequencyTextBox" Height="23" TextWrapping="Wrap" Text="" Width="220"/>
+          </StackPanel>
+          <Separator Height="5"></Separator>
+          <Separator Height="5"></Separator>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Min Gain   :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="MinGainTextBox" Height="23" TextWrapping="Wrap" Text="" Width="251"/>
+        </StackPanel>
+        <Separator Height="5"></Separator>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Pattern Electrical Tilt  :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="PatternElectricalTiltTextBox" Height="23" TextWrapping="Wrap" Text="" Width="195"/>
+        </StackPanel>
+        <Separator Height="5"></Separator>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Weight  :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="WeightTextBox" Height="23" TextWrapping="Wrap" Text="" Width="264"/>
+        </StackPanel>
+   <Separator Height="15"></Separator>
+        <!--todo CE4 -->
+        <Label>CE4:  -MaxGain  -Date  -MinFrq  -MaxFrq -Polarization</Label>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Description  : " Foreground="Black"></TextBlock>
+          <TextBox x:Name="DescriptionTextBox" Height="23" TextWrapping="Wrap" Text="" Width="269"/>
+        </StackPanel>
+   <Separator Height="15"></Separator>
+        <!--todo CELLCAD-->
+        <Label>CELLCAD:  #src=.pln -Date</Label>
+          <StackPanel Orientation="Horizontal">
+              <TextBlock Text="Gain : " Foreground="Black"></TextBlock>
+              <TextBox x:Name="GainTextBox" Height="23" TextWrapping="Wrap" Text="" Width="307"/>
+          </StackPanel>
+          <Separator Height="5"></Separator>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Time :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="TimeTextBox" Height="23" TextWrapping="Wrap" Text="" Width="280"/>
+        </StackPanel>
+     <Separator Height="15"></Separator>
+        <!--todo CELLPLAN-->
+        <Label>CELLPLAN: -MaxGain -Description -Hwidth -Vwidth -MinFrq -MaxFrq</Label>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Size  :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="SizeTextBox" Height="23" TextWrapping="Wrap" Text="" Width="282"/>
+        </StackPanel>
+        <Separator Height="5"></Separator>
+        <!--todo GEOPLAN-->
+        <Label>GEOPLAN: -MaxGain -Description -AntType=Family -Polarization -Weight</Label>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Azimuth Display Offset Deg     :  " Foreground="Black"></TextBlock>
+          <TextBox x:Name="AzimuthDisplayTextBox" Height="23" TextWrapping="Wrap" Text="" Width="168"/>
+        </StackPanel>
+        <Separator Height="5"></Separator>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Date Measured :  " Foreground="Black"></TextBlock>
+          <TextBox x:Name="DateMesuredTextBox" Height="23" TextWrapping="Wrap" Text="" Width="247"/>
+        </StackPanel>
+        <Separator Height="5"></Separator>
+         <StackPanel Orientation="Horizontal">
+              <TextBlock Text="Depth : " Foreground="Black"></TextBlock>
+              <TextBox x:Name="DepthTextBox" Height="23" TextWrapping="Wrap" Text="" Width="298"/>
+          </StackPanel>
+          <Separator Height="5"></Separator>
+          <StackPanel Orientation="Horizontal">
+              <TextBlock Text="Electrical Tilt : " Foreground="Black"></TextBlock>
+              <TextBox x:Name="ElectricalTiltTextBox" Height="23" TextWrapping="Wrap" Text="" Width="265"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+              <TextBlock Text="Height  :         " Foreground="Black"></TextBlock>
+              <TextBox x:Name="HeightTextBox" Height="23" TextWrapping="Wrap" Text="" Width="266"/>
+          </StackPanel>
+          <Separator Height="5"></Separator>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Lower Frequency :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="LowerFrequencyTextBox" Height="23" TextWrapping="Wrap" Text="" Width="215"/>
+        </StackPanel>
+        <Separator Height="5"/>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Upper Frequency  :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="UpperFrequencyTextBox" Height="23" TextWrapping="Wrap" Text="" Width="211"/>
+        </StackPanel>
+      <Separator Height="5"></Separator>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Width  :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="WidthTextBox" Height="23" TextWrapping="Wrap" Text="" Width="270"/>
+        </StackPanel>
+  <Separator Height="15"></Separator>
+        <!--todo GRANET-->
+        <Label>GRANET: -MaxGain -vbwidth -vbWith -FrontToBack -Polarization</Label>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Lobe Tilt :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="LobeTiltTextBox" Height="23" TextWrapping="Wrap" Text="" Width="259"/>
+        </StackPanel>
+        <Separator Height="5"></Separator>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Wind Area  :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="WindAreaTextBox" Height="23" TextWrapping="Wrap" Text="" Width="246"/>
+        </StackPanel>
+        <Separator Height="5"/>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Meas Frequency   :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="MeasFrequencyTextBox" Height="23" TextWrapping="Wrap" Text="" Width="213"/>
+        </StackPanel>
+      <Separator Height="15"></Separator>
+        <!--todo HODIAX -->
+        <Label>Hodiax: </Label>
+        <Separator Height="15"></Separator>
+        <!-- todo HYDRA-->
+        <Label>Hydra: -Gain -Description -hwidth -vwidth -Date </Label>
+        <Label>-width -depth -frequency -polarization</Label>
+        <StackPanel Orientation="Horizontal">
+              <TextBlock Text="Length   :         " Foreground="Black"></TextBlock>
+              <TextBox x:Name="LengthTextBox" Height="23" TextWrapping="Wrap" Text="" Width="262"/>
+          </StackPanel>
+          <Separator Height="5"></Separator>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Low Frequency  :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="LowFrequencyTextBox" Height="23" TextWrapping="Wrap" Text="" Width="222"/>
+        </StackPanel>
+        <Separator Height="5"></Separator>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="High Frequency   :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="HighFrequencyTextBox" Height="23" TextWrapping="Wrap" Text="" Width="215"/>
+        </StackPanel>
+        <Separator Height="5"></Separator>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Max Power  :         " Foreground="Black"></TextBlock>
+          <TextBox x:Name="MaxPowerTextBox" Height="23" TextWrapping="Wrap" Text="" Width="244"/>
+        </StackPanel>
+        <Separator Height="15"></Separator>
+        <!-- todo LCC-ANET-->
+        <Label>LCC: -MaxGain -MinFreq -hbwidth -vbwidth -MaxFrequency</Label>
+        <Label>-dimensions -length </Label>
+       <Separator Height="15"></Separator>
+        <!-- todo NETPLAN-->
+        <Label>NETPLAN:</Label>
+       <Separator Height="15"></Separator>
+     
+      <!-- todo ODYSSEEY-->
+          <Label>ODYSSEY: -MaxGain -Gain -Frequency -ElectricalTilt</Label>
+           <Separator Height="5"></Separator>
+        <!-- todo PATHLOSS-->
+          <Label>PATHLOSS: -Gain -Description -LowFrequency -Date -Max Pow -length</Label>
+          <Label>-width -frequency</Label>
+          <StackPanel Orientation="Horizontal">
+              <TextBlock Text="ATVSWR  :  " Foreground="Black"></TextBlock>
+              <TextBox x:Name="AtvswrTextBox" Height="23" TextWrapping="Wrap" Text="" Width="278"/>
+          </StackPanel>
+          <Separator Height="15"></Separator>
+        <!-- todo WIZARD-->
+        <Label>WIZARD: -maxgain -mingain -description -length -date -polarization</Label>
+        <Label>-hbeam -vbeam</Label>
+          <StackPanel Orientation="Horizontal">
+              <TextBlock Text="FCC ID  :  " Foreground="Black"></TextBlock>
+              <TextBox x:Name="FccIdTextBox" Height="23" TextWrapping="Wrap" Text="" Width="289"/>
+          </StackPanel>
+          <Separator Height="5"></Separator>
+          <StackPanel Orientation="Horizontal">
+              <TextBlock Text="MFR ID   :         " Foreground="Black"></TextBlock>
+              <TextBox x:Name="MfrIdTextBox" Height="23" TextWrapping="Wrap" Text="" Width="261"/>
+          </StackPanel>
+          <Separator Height="15"></Separator>
+    </StackPanel>
+    </ScrollViewer>
+  
 
-        <!--#region Format Radio Buttons-->
-        
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,100,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
-            <StackPanel Orientation="Horizontal" RenderTransformOrigin="0.5,1.842">
-                <RadioButton x:Name="Ce4VwaRadioButton" Content=".vwa" Margin="2,0,2,0" VerticalContentAlignment="Center" GroupName="Ce4RadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <RadioButton x:Name="Ce4TxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="Ce4RadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            </StackPanel>
-        </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,185,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
-            <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="GeoPlanVwaRadioButton" Content=".vwa" Margin="2,0,2,0" VerticalContentAlignment="Center" GroupName="GeoPlanRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-                <RadioButton x:Name="GeoPlanTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="GeoPlanRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-            </StackPanel>
-        </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,213.7,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
-            <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="GranetPatRadioButton" Content=".pat" Margin="2,0,1,0" VerticalContentAlignment="Center" GroupName="GranetRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-                <RadioButton x:Name="GranetTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="GranetRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-            </StackPanel>
-        </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,242,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
-            <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="HodiaxHodRadioButton" Content=".hod" Margin="2" VerticalContentAlignment="Center" GroupName="HodiaxRadioButtons" IsChecked="True" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-                <RadioButton x:Name="HodiaxTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="HodiaxRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-            </StackPanel>
-        </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,271,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
-            <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="HydraAdfRadioButton" Content=".adf" Margin="2,0,4,0" VerticalContentAlignment="Center" GroupName="HydraRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-                <RadioButton x:Name="HydraTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="HydraRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-            </StackPanel>
-        </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,300,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
-            <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="LccAntRadioButton" Content=".ant" Margin="2,0,4,0" VerticalContentAlignment="Center" GroupName="LccRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-                <RadioButton x:Name="LccTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="LccRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-            </StackPanel>
-        </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,390.3,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
-            <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="PathLossAdfRadioButton" Content=".adf" Margin="2,0,4,0" VerticalContentAlignment="Center" GroupName="PathLossRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-                <RadioButton x:Name="PathLossTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="PathLossRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-            </StackPanel>
-        </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,418.9,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
-            <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="WizardApfRadioButton" Content=".apf" Margin="2,0,4,0" VerticalContentAlignment="Center" GroupName="WizardRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-                <RadioButton x:Name="WizardTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="WizardRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
-            </StackPanel>
-        </StackPanel>
+    <!--Display Out-->
+    <Grid x:Name="DisplayGrid" Grid.Column="6" Grid.Row="2" Margin="7.429,0,25.143,0.714">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
 
-        <!--#endregion -->
+      <ScrollViewer CanContentScroll="True" Margin="0,0,0,0">
+        <TextBox x:Name="ReadResults"
+                 VerticalContentAlignment="Stretch"
+                 HorizontalAlignment="Stretch"
+                 TextWrapping="Wrap"
+                 Text=""
+                 VerticalAlignment="Top" Height="Auto"
+                 Width="Auto" />
+      </ScrollViewer>
+      <Separator Height="1" Grid.Row="1"/>
+      <ScrollViewer CanContentScroll="True" Grid.Row="2" Margin="0,0,0,0">
+        <TextBox x:Name="SaveResults"
+             VerticalContentAlignment="Stretch"
+             HorizontalAlignment="Stretch"
+             TextWrapping="Wrap"
+             Text=""
+             VerticalAlignment="Top" Height="Auto"
+              Width="Auto" />
+      </ScrollViewer>
+      <Separator Height="1" Grid.Row="1"/>
 
-        <Label x:Name="DebugLabel" 
-               Content="Debug Label :" 
-               Grid.Column="4" 
-               HorizontalAlignment="Left" 
-               Margin="3.714,25.286,-4.857,0" 
-               Grid.Row="3" 
-               VerticalAlignment="Top" 
-               Grid.ColumnSpan="3" Width="780" Height="26"/>
-
-        <Label x:Name="ResultsLabel" 
-               Content="" Grid.Column="4"
-               FontSize="14"
-               FontWeight="SemiBold"
-               Height="29"
-               HorizontalAlignment="Right" 
-               Margin="0,34.857,25.143,0" 
-               Grid.Row="1" 
-               VerticalAlignment="Top"
-               Width="643" Grid.ColumnSpan="3"/>
-
+      <!--</StackPanel>-->
     </Grid>
+
+
+    <!--#region Nav Buttons -->
+    <StackPanel Orientation="Horizontal" Grid.ColumnSpan="4" Margin="3.286,105,6.286,55" Grid.RowSpan="2" Grid.Column="1">
+      <Button x:Name="BrowseDirSrcButton"
+            Content="Source Dir"
+            Margin="5"
+            Height="25"
+            Width="65"
+            Click="Src_Dir_Button_Click"/>
+      <Button x:Name="ConvertedFileDestButton"
+            Content="Target Dir"
+            Margin="5"
+            Height="25"
+            Width="65"
+            Background="LightGreen"
+            Click="Target_Dir_Button_Click"/>
+      <Button x:Name="DownloadFileButton"
+            Content="Download"
+            Margin="5"
+            Height="25"
+            Width="65"
+            Background="#1589FF"/>
+      <Button x:Name="SingleFileButton"
+              Content="Select File"
+              Margin="5"
+              Height="25"
+              Width="65"
+              Background="White"
+              Click="Single_File_Button_Click"/>
+      <Button x:Name="PopulateButton"
+              Content="Populate"
+              Margin="5"
+              Height="25"
+              Width="65"
+              Background="White"
+              Click="PopulateButton_Click"/>
+    </StackPanel>
+    <!--#endregion-->
+
+    <!--#region Format Radio Buttons-->
+
+    <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,100,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+      <StackPanel Orientation="Horizontal" RenderTransformOrigin="0.5,1.842">
+        <RadioButton x:Name="Ce4VwaRadioButton" Content=".vwa" Margin="2,0,2,0" VerticalContentAlignment="Center" GroupName="Ce4RadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <RadioButton x:Name="Ce4TxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="Ce4RadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+      </StackPanel>
+    </StackPanel>
+    <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,185,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+      <StackPanel Orientation="Horizontal">
+        <RadioButton x:Name="GeoPlanVwaRadioButton" Content=".vwa" Margin="2,0,2,0" VerticalContentAlignment="Center" GroupName="GeoPlanRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+        <RadioButton x:Name="GeoPlanTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="GeoPlanRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+      </StackPanel>
+    </StackPanel>
+    <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,213.7,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+      <StackPanel Orientation="Horizontal">
+        <RadioButton x:Name="GranetPatRadioButton" Content=".pat" Margin="2,0,1,0" VerticalContentAlignment="Center" GroupName="GranetRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+        <RadioButton x:Name="GranetTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="GranetRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+      </StackPanel>
+    </StackPanel>
+    <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,242,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+      <StackPanel Orientation="Horizontal">
+        <RadioButton x:Name="HodiaxHodRadioButton" Content=".hod" Margin="2" VerticalContentAlignment="Center" GroupName="HodiaxRadioButtons" IsChecked="True" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+        <RadioButton x:Name="HodiaxTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="HodiaxRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+      </StackPanel>
+    </StackPanel>
+    <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,271,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+      <StackPanel Orientation="Horizontal">
+        <RadioButton x:Name="HydraAdfRadioButton" Content=".adf" Margin="2,0,4,0" VerticalContentAlignment="Center" GroupName="HydraRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+        <RadioButton x:Name="HydraTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="HydraRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+      </StackPanel>
+    </StackPanel>
+    <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,300,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+      <StackPanel Orientation="Horizontal">
+        <RadioButton x:Name="LccAntRadioButton" Content=".ant" Margin="2,0,4,0" VerticalContentAlignment="Center" GroupName="LccRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+        <RadioButton x:Name="LccTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="LccRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+      </StackPanel>
+    </StackPanel>
+    <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,390.3,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+      <StackPanel Orientation="Horizontal">
+        <RadioButton x:Name="PathLossAdfRadioButton" Content=".adf" Margin="2,0,4,0" VerticalContentAlignment="Center" GroupName="PathLossRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+        <RadioButton x:Name="PathLossTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="PathLossRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+      </StackPanel>
+    </StackPanel>
+    <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" Height="20" Margin="0.429,418.9,0,0" Grid.Row="2" VerticalAlignment="Top" Width="89">
+      <StackPanel Orientation="Horizontal">
+        <RadioButton x:Name="WizardApfRadioButton" Content=".apf" Margin="2,0,4,0" VerticalContentAlignment="Center" GroupName="WizardRadioButtons" IsChecked="True" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+        <RadioButton x:Name="WizardTxtRadioButton" Content=".txt" Margin="2" VerticalContentAlignment="Center" GroupName="WizardRadioButtons" IsChecked="False" Width="41" HorizontalAlignment="Left" VerticalAlignment="Center"></RadioButton>
+      </StackPanel>
+    </StackPanel>
+
+    <!--#endregion -->
+
+    <Label x:Name="DebugLabel"
+           Content="Debug Label :"
+           Grid.Column="4"
+           HorizontalAlignment="Left"
+           Margin="3.714,25.286,-4.857,0"
+           Grid.Row="3"
+           VerticalAlignment="Top"
+           Grid.ColumnSpan="3" Width="780" Height="26"/>
+
+    <Label x:Name="ResultsLabel"
+           Content="" Grid.Column="4"
+           FontSize="14"
+           FontWeight="SemiBold"
+           Height="29"
+           HorizontalAlignment="Right"
+           Margin="0,34.857,25.143,0"
+           Grid.Row="1"
+           VerticalAlignment="Top"
+           Width="643" Grid.ColumnSpan="3"/>
+
+  </Grid>
 </Window>
 
