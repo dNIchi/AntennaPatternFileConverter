@@ -81,11 +81,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Models\AirCom.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Models\clsFiles.cs" />
+    <Compile Include="Models\Atoll.cs" />
     <Compile Include="Models\AtollPillaLst.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -93,6 +94,19 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Ce4.cs" />
+    <Compile Include="Models\CelCad.cs" />
+    <Compile Include="Models\CelPlan.cs" />
+    <Compile Include="Models\ConvertDep.cs" />
+    <Compile Include="Models\GeoPlan.cs" />
+    <Compile Include="Models\Granet.cs" />
+    <Compile Include="Models\Hodiax.cs" />
+    <Compile Include="Models\Hydra.cs" />
+    <Compile Include="Models\LccNet.cs" />
+    <Compile Include="Models\NetPlan.cs" />
+    <Compile Include="Models\Odyssey.cs" />
+    <Compile Include="Models\PathLoss.cs" />
+    <Compile Include="Models\Wizard.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -169,6 +183,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Ingest\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!--To modify your build process, add your task inside one of the targets below and uncomment it. 

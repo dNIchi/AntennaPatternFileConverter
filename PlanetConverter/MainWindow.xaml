@@ -13,7 +13,7 @@
     Margin="0,0,0,0"
     mc:Ignorable="d">
 
-     <!--#region Header -->
+    <!--#region Header -->
   <Grid x:Name="MainGrid"
       Margin=".5,0,.5,0" >
     <Grid.ColumnDefinitions>
@@ -373,8 +373,8 @@
         </StackPanel>
         <Separator Height="5"></Separator>
         <StackPanel Orientation="Horizontal">
-          <TextBlock Text="Pattern Electrical Tilt  :         " Foreground="Black"></TextBlock>
-          <TextBox x:Name="PatternElectricalTiltTextBox" Height="23" TextWrapping="Wrap" Text="" Width="195"/>
+
+            <TextBox x:Name="PatternElectricalTiltTextBox" Height="23" TextWrapping="Wrap" Text="" Width="195"/>
         </StackPanel>
         <Separator Height="5"></Separator>
         <StackPanel Orientation="Horizontal">
@@ -537,7 +537,7 @@
       </Grid.RowDefinitions>
 
       <ScrollViewer CanContentScroll="True" Margin="0,0,0,0">
-        <TextBox x:Name="ReadResults"
+        <TextBox x:Name="SuccessResults"
                  VerticalContentAlignment="Stretch"
                  HorizontalAlignment="Stretch"
                  TextWrapping="Wrap"
@@ -547,7 +547,7 @@
       </ScrollViewer>
       <Separator Height="1" Grid.Row="1"/>
       <ScrollViewer CanContentScroll="True" Grid.Row="2" Margin="0,0,0,0">
-        <TextBox x:Name="SaveResults"
+        <TextBox x:Name="ErrorResults"
              VerticalContentAlignment="Stretch"
              HorizontalAlignment="Stretch"
              TextWrapping="Wrap"
@@ -569,34 +569,35 @@
             Height="25"
             Width="65"
             Click="Src_Dir_Button_Click"/>
-      <Button x:Name="ConvertedFileDestButton"
+      <Button x:Name="TargetDirectory"
             Content="Target Dir"
             Margin="5"
             Height="25"
             Width="65"
             Background="LightGreen"
             Click="Target_Dir_Button_Click"/>
-      <Button x:Name="DownloadFileButton"
+      <Button x:Name="ConvertDownloadButton"
             Content="Download"
             Margin="5"
             Height="25"
             Width="65"
-            Background="#1589FF"/>
-      <Button x:Name="SingleFileButton"
-              Content="Select File"
-              Margin="5"
-              Height="25"
-              Width="65"
-              Background="White"
-              Click="Single_File_Button_Click"/>
-      <Button x:Name="PopulateButton"
-              Content="Populate"
-              Margin="5"
-              Height="25"
-              Width="65"
-              Background="White"
-              Click="PopulateButton_Click"/>
-    </StackPanel>
+            Background="#1589FF"
+              Click="Convert_Download_Button_Click"/>
+           <Button x:Name="Reset"
+                Content="Reset"
+                Margin="5"
+                Height="25"
+                Width="65"
+                Background="White"
+                Click="Reset_Values_Button_Click"/>
+        <Button x:Name="PopulateButton"
+                Content="Populate"
+                Margin="5"
+                Height="25"
+                Width="65"
+                Background="White"
+                Click="PopulateButton_Click"/>
+        </StackPanel>
     <!--#endregion-->
 
     <!--#region Format Radio Buttons-->
